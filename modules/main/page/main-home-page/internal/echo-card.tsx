@@ -27,7 +27,7 @@ export default function EchoCard() {
                   backdrop-blur-3xl"
     >
       <p className="underline drop-shadow-[0_0_0.75rem_#211C84] dark:drop-shadow-[0_0_0.75rem_#91DDCF]">
-        {echo?.content ?? '我在等网络加载，你在等什么？'}
+        {echo?.content ?? '我在等网络加载，也在等你'}
       </p>
       <footer
         className="ml-auto text-sm font-thin text-pink-600 dark:text-emerald-300
