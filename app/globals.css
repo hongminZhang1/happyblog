@@ -163,6 +163,7 @@ body::-webkit-scrollbar-thumb {
   border-radius: 8px;
 }
 
+/* * markdown 渲染时的代码主题 */
 /* ! 这里的 data-theme='${ }' lib/markdown/index.ts 中的主题名 */
 code[data-theme*='github-light'],
 code[data-theme*='github-light'] span,
@@ -181,6 +182,12 @@ html.dark figure[data-theme*='aurora-x'] {
   background-color: var(--shiki-dark-bg);
 }
 
+/* ! markdown 中代码框的滚动条出现时，如果不适用下面这个代码会导致按扭不固定在右上角，而是随着滚动条滚动 */
+pre > code {
+  overflow-x: auto;
+}
+
+/* * 覆盖亮暗切换时默认的过渡的属性 */
 ::view-transition-new(root), 
 ::view-transition-old(root) {
   animation: none;
