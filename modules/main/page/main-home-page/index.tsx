@@ -1,3 +1,4 @@
+import { getAllPublishedEcho } from '@/actions/echos'
 import * as motion from 'motion/react-client'
 import BioSection from './internal/bio-section'
 import EchoCard from './internal/echo-card'
@@ -5,6 +6,8 @@ import TechStack from './internal/tech-stack'
 import YeAvatar from './internal/ye-avatar'
 
 export default function MainLayoutContainer() {
+  const allPublishedEcho = getAllPublishedEcho()
+
   return (
     <motion.main
       className="flex flex-col justify-center items-center gap-6 py-4 overflow-hidden"
@@ -17,7 +20,7 @@ export default function MainLayoutContainer() {
     >
       <YeAvatar />
       <BioSection />
-      <EchoCard />
+      <EchoCard allPublishedEcho={allPublishedEcho} />
       <TechStack />
     </motion.main>
   )

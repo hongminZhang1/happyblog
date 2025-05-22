@@ -1,24 +1,17 @@
 'use client'
 
 import type { Echo } from '@prisma/client'
-import { getRandomPublishedEcho } from '@/actions/echos'
-import { useEffect, useState } from 'react'
+import { use, useMemo } from 'react'
 
-let cachedEcho: Echo | null = null
+let cacheEchoIndex: number | null = null
 
-export default function EchoCard() {
-  const [echo, setEcho] = useState<Echo | null>(cachedEcho)
+export default function EchoCard({ allPublishedEcho }: { allPublishedEcho: Promise<Echo[]> }) {
+  const echos = use(allPublishedEcho)
 
-  useEffect(() => {
-    if (!cachedEcho) {
-      getRandomPublishedEcho().then((res) => {
-        if (res) {
-          cachedEcho = res
-          setEcho(res)
-        }
-      })
-    }
-  }, [])
+  const echo = useMemo(() => {
+    cacheEchoIndex ??= Math.floor(Math.random() * echos.length)
+    return echos[cacheEchoIndex]
+  }, [echos])
 
   return (
     <section
@@ -26,15 +19,16 @@ export default function EchoCard() {
                 bg-slate-300/40 dark:bg-gray-900/30
                   backdrop-blur-3xl"
     >
-      <p className="underline drop-shadow-[0_0_0.75rem_#211C84] dark:drop-shadow-[0_0_0.75rem_#91DDCF]">
-        {echo?.content ?? '我在等网络加载，也在等你'}
+      <p suppressHydrationWarning className="underline drop-shadow-[0_0_0.75rem_#211C84] dark:drop-shadow-[0_0_0.75rem_#91DDCF]">
+        {echo?.content ?? '虚无。'}
       </p>
       <footer
+        suppressHydrationWarning
         className="ml-auto text-sm font-thin text-pink-600 dark:text-emerald-300
                     drop-shadow-[0_0_0.75rem_#211C84] dark:drop-shadow-[0_0_0.75rem_#91DDCF]"
       >
         「
-        {echo?.reference ?? '叶鱼'}
+        {echo?.reference ?? '无名。'}
         」
       </footer>
     </section>
