@@ -1,17 +1,18 @@
 'use client'
 
 import type { Echo } from '@prisma/client'
-import { use, useMemo } from 'react'
-
-let cacheEchoIndex: number | null = null
+import { useRandomEchoIndexStore } from '@/store/use-display-echo-store'
+import { use } from 'react'
 
 export default function EchoCard({ allPublishedEcho }: { allPublishedEcho: Promise<Echo[]> }) {
   const echos = use(allPublishedEcho)
+  const randomIndex = useRandomEchoIndexStore(s => s.randomIndex)
+  const selectRandomIndex = useRandomEchoIndexStore(s => s.selectRandomIndex)
 
-  const echo = useMemo(() => {
-    cacheEchoIndex ??= Math.floor(Math.random() * echos.length)
-    return echos[cacheEchoIndex]
-  }, [echos])
+  if (randomIndex === null)
+    selectRandomIndex(echos.length)
+
+  const echo = echos[randomIndex ?? 0]
 
   return (
     <section
