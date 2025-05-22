@@ -19,7 +19,7 @@ export const processor = unified()
     },
     transformers: [
       transformerCopyButton({
-        visibility: 'always',
+        visibility: 'hover',
         feedbackDuration: 3_000,
       }),
     ],
