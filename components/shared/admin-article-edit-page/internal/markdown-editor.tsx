@@ -7,7 +7,9 @@ import mediumZoom from '@bytemd/plugin-medium-zoom'
 import { Editor } from '@bytemd/react'
 import zh_Hans from 'bytemd/locales/zh_Hans.json'
 import { common } from 'lowlight'
-import 'highlight.js/styles/tokyo-night-dark.css' // 选择一个主题
+import { toast } from 'sonner'
+import { genUploader } from 'uploadthing/client'
+import 'highlight.js/styles/tokyo-night-dark.css'
 import 'bytemd/dist/index.css'
 
 const plugins: BytemdPlugin[] = [
@@ -22,28 +24,22 @@ const plugins: BytemdPlugin[] = [
 ]
 
 const handleUploadImages: EditorProps['uploadImages'] = async (files) => {
-  const file = files[0]
-
-  if (file) {
-    const formData = new FormData()
-    formData.append('file', file)
-
-    const res = await (
-      await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
-    ).json()
-
-    if (res.url) {
-      return [{ url: res.url }]
-    }
-
+  if (!files || files.length === 0) {
+    toast.error('请先选择图片')
     return []
   }
-  else {
-    return []
-  }
+
+  const { uploadFiles } = genUploader()
+
+  const uploadPromise = uploadFiles('imageUploader', { files })
+
+  const response = await toast.promise(uploadPromise, {
+    loading: '图片上传中...',
+    success: '图片上传成功',
+    error: '图片上传失败',
+  })
+
+  return response.unwrap()
 }
 
 export default function MarkdownEditor({

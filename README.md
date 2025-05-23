@@ -125,6 +125,16 @@ AUTH_GITHUB_SECRET={CLIENT_SECRET}
 
 就完成登录功能了~
 
+**注意：其他人也能登录到后台查看信息，但是没有权限操作数据**
+**如果你不希望其他人也能登录到后台，请前往 `config/constant/index.ts` 中将 `ADMIN_ONLY` 设置为 `true`**
+
+### 图片存储
+
+前往 [uploadthing](https://uploadthing.com/) 注册帐号，新建 app，在 `env` 文件中填写 API Keys。
+```env
+UPLOADTHING_TOKEN=
+```
+
 ### 修改网站信息
 
 > 肥肠抱歉，由于本人技术太菜，所以很多地方都需要你手动去修改代码才能更新自己的配置，我会尽量告诉你各个文件的位置。
