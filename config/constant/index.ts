@@ -6,6 +6,11 @@ import type { Metadata } from 'next'
 // ! 需要去 .env 中配置
 export const ADMIN_EMAILS = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',')
 
+// * true 表示只有管理员能访问 admin 页面，false 表示任何人只要登录了都可以访问 admin 页面
+// * 这里只是控制能否访问 admin 页面的，上面的管理员邮箱才是控制数据操作权限的
+// * 如果你害怕，可以设置为 true
+export const ADMIN_ONLY = false
+
 // * 元数据，SEO，网页关键字。。。
 export const metadata: Metadata = {
   title: `叶鱼 | 业余`,
@@ -25,7 +30,7 @@ export const metadata: Metadata = {
   creator: '叶鱼',
 }
 
-// * 首页动画加载的文字，建议不要超过 5 个字，你也可以去修改样式~
+// * 首页动画加载的文字，建议不要超过 5 个字，不然长度太长，当然，你也可以去修改样式~
 export const INITIAL_WELCOME_TEXT = '业余'
 
 // * 配置评论系统的官方文档 https://giscus.app/zh-CN
