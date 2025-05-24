@@ -1,36 +1,22 @@
 'use client'
 
-import { getAllTags } from '@/actions/tags'
-import Loading from '@/components/shared/loading'
-import { useStoreLoader } from '@/hooks/use-store-loader'
+import type { Tag } from '@/store/use-tag-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { motion } from 'motion/react'
+import { useEffect } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './tag-table-column'
 
-export default function TagListTable() {
-  const { tags, setTags } = useTagStore()
-  const { data, error, loading } = useStoreLoader(
-    getAllTags,
-    setTags,
-    tags,
-  )
+export default function TagListTable({ initialData }: { initialData: Tag[] }) {
+  const { tags, setTags, isFirstRender, markRendered } = useTagStore()
 
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Loading />
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center text-red-500">
-        加载出错...
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (isFirstRender) {
+      setTags(initialData)
+      markRendered()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <motion.main
@@ -43,7 +29,7 @@ export default function TagListTable() {
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={tags} />
     </motion.main>
   )
 }

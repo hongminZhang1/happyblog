@@ -3,14 +3,14 @@ import { create } from 'zustand'
 
 interface IEchoStore {
   echos: Echo[]
-  setEchos: (echos: Echo[]) => void
   isFirstRender: boolean
+  setEchos: (echos: Echo[]) => void
   markRendered: () => void
 }
 
 export const useEchoStore = create<IEchoStore>(set => ({
-  isFirstRender: true,
   echos: [],
+  isFirstRender: true,
   setEchos: echos => set({ echos }),
   markRendered: () => set({ isFirstRender: false }),
 }))
