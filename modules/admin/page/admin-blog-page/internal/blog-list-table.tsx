@@ -1,32 +1,22 @@
 'use client'
 
-import { getAllBlogs } from '@/actions/blogs'
-import Loading from '@/components/shared/loading'
-import { useStoreLoader } from '@/hooks/use-store-loader'
+import type { WithTagsBlog } from '@/store/use-blog-store'
 import { useBlogStore } from '@/store/use-blog-store'
 import { motion } from 'motion/react'
+import { useEffect } from 'react'
 import { columns } from './blog-table-column'
 import { DataTable } from './data-table'
 
-export default function BlogListTable() {
-  const { blogs, setBlogs } = useBlogStore()
-  const { data, error, loading } = useStoreLoader(getAllBlogs, setBlogs, blogs)
+export default function BlogListTable({ initialData }: { initialData: WithTagsBlog[] }) {
+  const { blogs, setBlogs, isFirstRender, markRendered } = useBlogStore()
 
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Loading />
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center text-red-500">
-        加载出错...
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (isFirstRender) {
+      setBlogs(initialData)
+      markRendered()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <motion.main
@@ -39,7 +29,7 @@ export default function BlogListTable() {
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={blogs} />
     </motion.main>
   )
 }

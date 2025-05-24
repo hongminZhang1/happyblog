@@ -1,8 +1,6 @@
 'use client'
 
-import type {
-  WithTagsBlog,
-} from '@/actions/blogs'
+import type { WithTagsBlog } from '@/store/use-blog-store'
 import type { ColumnDef } from '@tanstack/react-table'
 import TagItemBadge from '@/components/shared/tag-item-badge'
 import { Button } from '@/components/ui/button'

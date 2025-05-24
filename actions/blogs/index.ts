@@ -6,8 +6,6 @@ import { requireAdmin } from '@/lib/auth'
 import { processor } from '@/lib/markdown'
 import { revalidatePath } from 'next/cache'
 
-export type WithTagsBlog = Awaited<ReturnType<typeof getAllBlogs>>[number]
-
 export async function createBlog(values: ArticleDTO) {
   await requireAdmin()
 
