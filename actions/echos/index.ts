@@ -1,20 +1,19 @@
 'use server'
 
-import type { EchoValues } from '@/components/modal/create-echo-modal'
-import type { OmitCreatedAtEcho } from '@/components/modal/edit-echo-modal'
+import type { CreateEchoDTO, UpdateEchoDTO } from './type'
 import { prisma } from '@/db'
 import { requireAdmin } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 
-export async function createEcho(values: EchoValues) {
+export async function createEcho(values: CreateEchoDTO) {
   await requireAdmin()
 
   revalidatePath('/')
 
   return await prisma.echo.create({
     data: {
-      content: values.echoContent,
-      reference: values.echoReference,
+      content: values.content,
+      reference: values.reference,
       isPublished: values.isPublished,
     },
   })
@@ -32,7 +31,7 @@ export async function deleteEchoById(id: number) {
   })
 }
 
-export async function updateEchoById(values: OmitCreatedAtEcho) {
+export async function updateEchoById(values: UpdateEchoDTO) {
   await requireAdmin()
 
   revalidatePath('/')

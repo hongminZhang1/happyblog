@@ -1,6 +1,8 @@
 'use client'
 
+import type { CreateEchoDTO } from '@/actions/echos/type'
 import { createEcho, getAllEchos } from '@/actions/echos'
+import { CreateEchoSchema } from '@/actions/echos/type'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -19,50 +21,31 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  ECHO_CONTENT_MAX_LENGTH,
-  ECHO_REFERENCE_MAX_LENGTH,
-} from '@/config/constant'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import { useEchoStore } from '@/store/use-echo-store'
 import { useModalStore } from '@/store/use-modal-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
-import { Switch } from '../ui/switch'
-import { Textarea } from '../ui/textarea'
-
-const formSchema = z.object({
-  echoContent: z
-    .string()
-    .min(1, { message: 'echo 不能为空' })
-    .max(ECHO_CONTENT_MAX_LENGTH, { message: 'echo 长度过长' }),
-  echoReference: z
-    .string()
-    .min(1, { message: '来源不能为空' })
-    .max(ECHO_REFERENCE_MAX_LENGTH, { message: '来源长度过长' }),
-  isPublished: z.boolean(),
-})
-
-export type EchoValues = z.infer<typeof formSchema>
 
 export default function CreateEchoModal() {
   const { modalType, onModalClose } = useModalStore()
   const isModalOpen = modalType === 'createEchoModal'
   const { setEchos } = useEchoStore()
 
-  const form = useForm<EchoValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateEchoDTO>({
+    resolver: zodResolver(CreateEchoSchema),
     defaultValues: {
-      echoContent: '',
-      echoReference: '',
+      content: '',
+      reference: '',
       isPublished: true,
     },
     mode: 'onBlur',
   })
 
-  const handleCreateEcho = async (values: EchoValues) => {
+  const handleCreateEcho = async (values: CreateEchoDTO) => {
     try {
       await createEcho(values)
       const echos = await getAllEchos()
@@ -79,7 +62,7 @@ export default function CreateEchoModal() {
     }
   }
 
-  function onSubmit(values: EchoValues) {
+  function onSubmit(values: CreateEchoDTO) {
     handleCreateEcho(values)
     onModalClose()
   }
@@ -102,7 +85,7 @@ export default function CreateEchoModal() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="echoContent"
+                name="content"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>引用</FormLabel>
@@ -120,7 +103,7 @@ export default function CreateEchoModal() {
 
               <FormField
                 control={form.control}
-                name="echoReference"
+                name="reference"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>来源</FormLabel>

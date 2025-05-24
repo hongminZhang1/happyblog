@@ -5,7 +5,6 @@ import type {
   SortingState,
 } from '@tanstack/react-table'
 import { DataTablePagination } from '@/components/shared/pagination'
-
 import {
   Table,
   TableBody,

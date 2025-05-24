@@ -1,7 +1,8 @@
 'use client'
 
-import type { Echo } from '@prisma/client'
+import type { UpdateEchoDTO } from '@/actions/echos/type'
 import { getAllEchos, updateEchoById } from '@/actions/echos'
+import { UpdateEchoSchema } from '@/actions/echos/type'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -18,35 +19,14 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  ECHO_CONTENT_MAX_LENGTH,
-  ECHO_REFERENCE_MAX_LENGTH,
-} from '@/config/constant'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import { useEchoStore } from '@/store/use-echo-store'
 import { useModalStore } from '@/store/use-modal-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
-import { Switch } from '../ui/switch'
-import { Textarea } from '../ui/textarea'
-
-const formSchema = z.object({
-  content: z
-    .string()
-    .min(1, { message: 'echo 不能为空' })
-    .max(ECHO_CONTENT_MAX_LENGTH, { message: 'echo 长度过长' }),
-  reference: z
-    .string()
-    .min(1, { message: '来源不能为空' })
-    .max(ECHO_REFERENCE_MAX_LENGTH, { message: '来源长度过长' }),
-  isPublished: z.boolean(),
-})
-
-type EchoForm = z.infer<typeof formSchema>
-
-export type OmitCreatedAtEcho = Omit<Echo, 'createdAt'>
 
 export default function EditEchoModal() {
   const { modalType, onModalClose, payload } = useModalStore()
@@ -54,21 +34,23 @@ export default function EditEchoModal() {
   const { setEchos } = useEchoStore()
 
   const { id, content, isPublished, reference } = payload
-    ? (payload as OmitCreatedAtEcho)
+    ? (payload as UpdateEchoDTO)
     : {}
 
-  const initialValues = {
+  const initialValues: UpdateEchoDTO = {
     content: content ?? '',
     reference: reference ?? '',
     isPublished: isPublished ?? true,
+    id: id ?? -1,
   }
 
-  const form = useForm<EchoForm>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<UpdateEchoDTO>({
+    resolver: zodResolver(UpdateEchoSchema),
     defaultValues: {
       content: '',
       reference: '',
       isPublished: true,
+      id: id ?? -1,
     },
     mode: 'onBlur',
   })
@@ -80,9 +62,9 @@ export default function EditEchoModal() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen, form])
 
-  const handleEditEcho = async (values: EchoForm) => {
-    if (!id) {
-      toast.error(`echo id 不存在`)
+  const handleEditEcho = async (values: UpdateEchoDTO) => {
+    if (!id || id === -1) {
+      toast.error(`引用 id 不存在`)
       return
     }
 
@@ -94,15 +76,15 @@ export default function EditEchoModal() {
     }
     catch (error) {
       if (error instanceof Error) {
-        toast.error(`更新 echo 失败~ ${error.message}`)
+        toast.error(`更新引用失败~ ${error.message}`)
       }
       else {
-        toast.error('更新 echo 失败~')
+        toast.error('更新引用失败~')
       }
     }
   }
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: UpdateEchoDTO) {
     handleEditEcho(values)
     onModalClose()
   }
