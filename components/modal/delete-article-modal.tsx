@@ -25,8 +25,7 @@ export default function DeleteArticleModal() {
             className="cursor-pointer"
             type="submit"
             onClick={() => {
-              // * 你知道的, 我很信任我自己 😎
-              ;(payload as () => void)()
+              typeof payload === 'function' && payload()
               onModalClose()
             }}
           >

@@ -1,6 +1,7 @@
 'use client'
 
 import type { Blog, BlogTag, Note, NoteTag } from '@prisma/client'
+import type { ArticleDTO } from './type'
 import { createBlog, updateBlogById } from '@/actions/blogs'
 import { createNote, updateNoteById } from '@/actions/notes'
 import { Button } from '@/components/ui/button'
@@ -15,55 +16,25 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { ARTICLE_TITLE_MAX_LENGTH } from '@/config/constant'
-import { REGEX } from '@/lib/regex'
 import { useModalStore } from '@/store/use-modal-store'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { TagType } from '@prisma/client'
 import { File } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 import MarkdownEditor from './internal/markdown-editor'
+import { ArticleSchema } from './type'
 
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(1, { message: '长度不能少于1个字符' })
-    .max(ARTICLE_TITLE_MAX_LENGTH, { message: '标题超出大小限制' }),
-  slug: z
-    .string()
-    .regex(REGEX.SLUG, {
-      message: '只允许输入数字、小写字母和中横线',
-    })
-    .min(1, { message: '长度不能少于1个字符' }),
-  isPublished: z.boolean(),
-  relatedTagNames: z
-    .array(z.string())
-    .max(3, { message: '最多只能选择 3 个标签' }),
-  content: z.string(),
-})
-
-export type UpdateArticleParamsWithBlogId = z.infer<typeof formSchema> & {
-  id: number
-}
-
-export type UpdateArticleParamsWithNoteId = z.infer<typeof formSchema> & {
-  id: number
-}
-
-export type CreateArticleParams = z.infer<typeof formSchema>
-
-function getEditPageType(url: string): 'BLOG' | 'NOTE' {
+function parseEditPageTypeFromUrl(url: string): TagType {
   const type = url.split('/')[2].toUpperCase()
-  if (type === 'BLOG' || type === 'NOTE') {
+  if (type === TagType.BLOG || type === TagType.NOTE) {
     return type
   }
-  throw new Error(`Unexpected page type: ${type}`)
+  throw new Error(`解析编辑页面类型错误`)
 }
 
-// * 表单渲染, markdown 编辑器集成
-export default function AdminBlogEditPage({
+export default function AdminArticleEditPage({
   article,
   relatedArticleTagNames,
   allTags,
@@ -74,8 +45,10 @@ export default function AdminBlogEditPage({
 }) {
   const router = useRouter()
   const { setModalOpen } = useModalStore()
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const pathname = usePathname()
+
+  const form = useForm<ArticleDTO>({
+    resolver: zodResolver(ArticleSchema),
     defaultValues: {
       title: article?.title ?? '',
       slug: article?.slug ?? '',
@@ -85,25 +58,33 @@ export default function AdminBlogEditPage({
     },
     mode: 'onBlur',
   })
-  const pathname = usePathname()
-  const editPageType = getEditPageType(pathname)
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: ArticleDTO) {
     try {
+      const editPageType = parseEditPageTypeFromUrl(pathname)
+
       if (article?.id) {
-        if (editPageType === 'BLOG') {
-          await updateBlogById({ ...values, id: article.id })
-        }
-        else {
-          await updateNoteById({ ...values, id: article.id })
+        switch (editPageType) {
+          case TagType.BLOG:
+            await updateBlogById({ ...values, id: article.id })
+            break
+          case TagType.NOTE:
+            await updateNoteById({ ...values, id: article.id })
+            break
+          default:
+            throw new Error(`文章类型错误`)
         }
       }
       else {
-        if (editPageType === 'BLOG') {
-          await createBlog(values)
-        }
-        else {
-          await createNote(values)
+        switch (editPageType) {
+          case TagType.BLOG:
+            await createBlog(values)
+            break
+          case TagType.NOTE:
+            await createNote(values)
+            break
+          default:
+            throw new Error(`文章类型错误`)
         }
       }
 

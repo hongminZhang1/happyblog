@@ -1,15 +1,12 @@
 'use server'
 
-import type {
-  CreateArticleParams,
-  UpdateArticleParamsWithNoteId,
-} from '@/components/shared/admin-article-edit-page'
+import type { ArticleDTO, UpdateArticleDTO } from '@/components/shared/admin-article-edit-page/type'
 import { prisma } from '@/db'
 import { requireAdmin } from '@/lib/auth'
 import { processor } from '@/lib/markdown'
 import { revalidatePath } from 'next/cache'
 
-export async function createNote(values: CreateArticleParams) {
+export async function createNote(values: ArticleDTO) {
   await requireAdmin()
 
   const existingNote = await prisma.note.findUnique({
@@ -77,7 +74,7 @@ export async function toggleNotePublishedById(id: number, newIsPublishedStatus: 
   })
 }
 
-export async function updateNoteById(values: UpdateArticleParamsWithNoteId) {
+export async function updateNoteById(values: UpdateArticleDTO) {
   await requireAdmin()
 
   const [existingNote, relatedTags, currentTags] = await Promise.all([

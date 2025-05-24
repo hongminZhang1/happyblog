@@ -1,9 +1,6 @@
 'use server'
 
-import type {
-  CreateArticleParams,
-  UpdateArticleParamsWithBlogId,
-} from '@/components/shared/admin-article-edit-page'
+import type { ArticleDTO, UpdateArticleDTO } from '@/components/shared/admin-article-edit-page/type'
 import { prisma } from '@/db'
 import { requireAdmin } from '@/lib/auth'
 import { processor } from '@/lib/markdown'
@@ -11,7 +8,7 @@ import { revalidatePath } from 'next/cache'
 
 export type WithTagsBlog = Awaited<ReturnType<typeof getAllBlogs>>[number]
 
-export async function createBlog(values: CreateArticleParams) {
+export async function createBlog(values: ArticleDTO) {
   await requireAdmin()
 
   const existingBlog = await prisma.blog.findUnique({
@@ -79,7 +76,7 @@ export async function toggleBlogPublishedById(id: number, newIsPublishedStatus: 
   })
 }
 
-export async function updateBlogById(values: UpdateArticleParamsWithBlogId) {
+export async function updateBlogById(values: UpdateArticleDTO) {
   await requireAdmin()
 
   const [existingBlog, relatedTags, currentTags] = await Promise.all([
