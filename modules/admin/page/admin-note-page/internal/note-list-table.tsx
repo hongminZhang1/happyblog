@@ -1,32 +1,22 @@
 'use client'
 
-import { getAllNotes } from '@/actions/notes'
-import Loading from '@/components/shared/loading'
-import { useStoreLoader } from '@/hooks/use-store-loader'
+import type { WithTagsNote } from '@/store/use-note-store'
 import { useNoteStore } from '@/store/use-note-store'
 import { motion } from 'motion/react'
+import { useEffect } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './note-table-column'
 
-export default function NoteListTable() {
-  const { notes, setNotes } = useNoteStore()
-  const { data, error, loading } = useStoreLoader(getAllNotes, setNotes, notes)
+export default function NoteListTable({ initialData }: { initialData: WithTagsNote[] }) {
+  const { notes, setNotes, isFirstRender, markRendered } = useNoteStore()
 
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Loading />
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center text-red-500">
-        加载出错...
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (isFirstRender) {
+      setNotes(initialData)
+      markRendered()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <motion.main
@@ -39,7 +29,7 @@ export default function NoteListTable() {
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={notes} />
     </motion.main>
   )
 }
