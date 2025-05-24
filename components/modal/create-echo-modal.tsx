@@ -54,10 +54,10 @@ export default function CreateEchoModal() {
     }
     catch (error) {
       if (error instanceof Error) {
-        toast.error(`创建 echo 失败 ${error.message}`)
+        toast.error(`创建引用失败 ${error.message}`)
       }
       else {
-        toast.error(`创建 echo 失败`)
+        toast.error(`创建引用失败`)
       }
     }
   }

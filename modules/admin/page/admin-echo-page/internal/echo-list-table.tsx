@@ -1,32 +1,22 @@
 'use client'
 
-import { getAllEchos } from '@/actions/echos'
-import Loading from '@/components/shared/loading'
-import { useStoreLoader } from '@/hooks/use-store-loader'
+import type { Echo } from '@prisma/client'
 import { useEchoStore } from '@/store/use-echo-store'
 import { motion } from 'motion/react'
+import { useEffect } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './echo-table-column'
 
-export default function EchoListTable() {
-  const { echos, setEchos } = useEchoStore()
-  const { data, error, loading } = useStoreLoader(getAllEchos, setEchos, echos)
+export default function EchoListTable({ initialData }: { initialData: Echo[] }) {
+  const { echos, setEchos, isFirstRender, markRendered } = useEchoStore()
 
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Loading />
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center text-red-500">
-        加载出错...
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (isFirstRender) {
+      setEchos(initialData)
+      markRendered()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <motion.main
@@ -39,7 +29,7 @@ export default function EchoListTable() {
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={echos} />
     </motion.main>
   )
 }
