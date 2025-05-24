@@ -1,10 +1,12 @@
 'use client'
 
+import type { CreateTagDTO } from '@/actions/tags/type'
 import {
   createBlogTag,
   createNoteTag,
   getAllTags,
 } from '@/actions/tags'
+import { CreateTagSchema } from '@/actions/tags/type'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -29,7 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { TAG_NAME_MAX_LENGTH } from '@/config/constant'
 import { useModalStore } from '@/store/use-modal-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -37,22 +38,14 @@ import { TagType } from '@prisma/client'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
-
-const formSchema = z.object({
-  tagName: z.string().min(1).max(TAG_NAME_MAX_LENGTH),
-  tagType: z.nativeEnum(TagType),
-})
-
-export type TagValues = z.infer<typeof formSchema>
 
 export default function CreateTagModal() {
   const { modalType, onModalClose } = useModalStore()
   const isModalOpen = modalType === 'createTagModal'
   const { setTags } = useTagStore()
 
-  const form = useForm<TagValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateTagDTO>({
+    resolver: zodResolver(CreateTagSchema),
     defaultValues: {
       tagName: '',
       tagType: TagType.BLOG,
@@ -60,16 +53,17 @@ export default function CreateTagModal() {
     mode: 'onBlur',
   })
 
-  const handleCreateTag = async (values: TagValues) => {
+  const handleCreateTag = async (values: CreateTagDTO) => {
     try {
-      if (values.tagType === TagType.BLOG) {
-        await createBlogTag(values.tagName)
-      }
-      else if (values.tagType === TagType.NOTE) {
-        await createNoteTag(values.tagName)
-      }
-      else {
-        throw new Error('tag type 不匹配')
+      switch (values.tagType) {
+        case TagType.BLOG:
+          await createBlogTag(values.tagName)
+          break
+        case TagType.NOTE:
+          await createNoteTag(values.tagName)
+          break
+        default:
+          throw new Error('tag type 不匹配')
       }
 
       const allTags = await getAllTags()
@@ -92,7 +86,7 @@ export default function CreateTagModal() {
     }
   }, [isModalOpen, form])
 
-  function onSubmit(values: TagValues) {
+  function onSubmit(values: CreateTagDTO) {
     handleCreateTag(values)
     onModalClose()
   }

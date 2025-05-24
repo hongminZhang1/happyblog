@@ -7,11 +7,11 @@ import { Edit2, Trash } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function ActionButtons({
-  tagId,
+  id,
   tagName,
   tagType,
 }: {
-  tagId: number
+  id: number
   tagName: string
   tagType: TagType
 }) {
@@ -20,16 +20,20 @@ export default function ActionButtons({
 
   const handleDelete = async () => {
     try {
-      if (tagType === TagType.BLOG && tagId) {
-        await deleteBlogTagById(tagId)
+      switch (tagType) {
+        case TagType.BLOG:
+          await deleteBlogTagById(id)
+          break
+        case TagType.NOTE:
+          await deleteNoteTagById(id)
+          break
+        default:
+          throw new Error('标签类型错误或 id 不存在!')
       }
-      else if (tagType === TagType.NOTE && tagId) {
-        await deleteNoteTagById(tagId)
-      }
-      else {
-        throw new Error('标签类型错误或 tagId 不存在!')
-      }
-      toast.success(`删除 ${tagName} 成功`)
+      const allTags = await getAllTags()
+      setTags(allTags)
+
+      toast.success(`删除标签 #${tagName} 成功`)
     }
     catch (error) {
       if (error instanceof Error) {
@@ -39,8 +43,6 @@ export default function ActionButtons({
         toast.error(`删除标签 ${tagName} 出错~`)
       }
     }
-    const allTags = await getAllTags()
-    setTags(allTags)
     onModalClose()
   }
 
@@ -51,7 +53,7 @@ export default function ActionButtons({
         className="size-8 cursor-pointer"
         onClick={() =>
           setModalOpen('editTagModal', {
-            tagId,
+            id,
             tagName,
             tagType,
           })}

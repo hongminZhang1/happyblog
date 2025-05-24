@@ -1,10 +1,12 @@
 'use client'
 
+import type { UpdateTagNameDTO } from '@/actions/tags/type'
 import {
   getAllTags,
   updateBlogTagById,
   updateNoteTagById,
 } from '@/actions/tags'
+import { UpdateTagNameSchema } from '@/actions/tags/type'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,7 +24,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { TAG_NAME_MAX_LENGTH } from '@/config/constant'
 import { useModalStore } from '@/store/use-modal-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,57 +31,50 @@ import { TagType } from '@prisma/client'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
-const formSchema = z.object({
-  tagName: z
-    .string()
-    .min(1, { message: '标签名不能为空' })
-    .max(TAG_NAME_MAX_LENGTH, { message: '标签名超出大小限制' }),
-})
-
-export type WithTagIdValues = z.infer<typeof formSchema> & {
-  tagId: number
-}
-
-// * 应该放一个表单
 export default function EditTagModal() {
   const { modalType, onModalClose, payload } = useModalStore()
   const isModalOpen = modalType === 'editTagModal'
   const { setTags } = useTagStore()
-  const { tagId, tagName, tagType } = payload
-    ? (payload as {
-        tagId: number
-        tagName: string
-        tagType: TagType
-      })
+  const { id, tagName, tagType } = payload
+    ? (payload as UpdateTagNameDTO)
     : {}
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<UpdateTagNameDTO>({
+    resolver: zodResolver(UpdateTagNameSchema),
     defaultValues: {
+      id: id ?? -1,
       tagName: tagName ?? '',
+      tagType: tagType ?? TagType.BLOG,
     },
     mode: 'onBlur',
   })
 
   useEffect(() => {
     if (isModalOpen && tagName) {
-      form.reset({ tagName })
+      form.reset({
+        id: id ?? -1,
+        tagName: tagName ?? '',
+        tagType: tagType ?? TagType.BLOG,
+      })
     }
-  }, [tagName, isModalOpen, form])
+  }, [isModalOpen, form, tagName, id, tagType])
 
-  const handleTagNameChange = async (values: WithTagIdValues) => {
+  const handleTagNameChange = async (values: UpdateTagNameDTO) => {
     try {
-      if (tagType === TagType.BLOG) {
-        await updateBlogTagById(values)
+      switch (tagType) {
+        case TagType.BLOG:
+          await updateBlogTagById(values)
+          break
+        case TagType.NOTE:
+          await updateNoteTagById(values)
+          break
+        default:
+          throw new Error('标签类型错误!')
       }
-      else if (tagType === TagType.NOTE) {
-        await updateNoteTagById(values)
-      }
-      else {
-        throw new Error('标签类型错误!')
-      }
+      const allTags = await getAllTags()
+      setTags(allTags)
+
       toast.success(`修改成功`)
     }
     catch (error) {
@@ -91,17 +85,14 @@ export default function EditTagModal() {
         toast.error(`修改标签出错`)
       }
     }
-
-    const allTags = await getAllTags()
-    setTags(allTags)
   }
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!tagId || !tagName) {
-      toast.error(`tagId 和 tagName 不能为空`)
+  async function onSubmit(values: UpdateTagNameDTO) {
+    if (!id || id === -1 || !tagName) {
+      toast.error(`id 和标签名为空`)
       return
     }
-    await handleTagNameChange({ ...values, tagId })
+    await handleTagNameChange({ ...values })
     onModalClose()
   }
   return (

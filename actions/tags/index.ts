@@ -1,6 +1,6 @@
 'use server'
 
-import type { WithTagIdValues } from '@/components/modal/edit-tag-modal'
+import type { UpdateTagNameDTO } from './type'
 import { prisma } from '@/db'
 import { requireAdmin } from '@/lib/auth'
 import { TagType } from '@prisma/client'
@@ -50,10 +50,10 @@ export async function createNoteTag(tagName: string) {
   })
 }
 
-export async function deleteBlogTagById(tagId: number) {
+export async function deleteBlogTagById(id: number) {
   await requireAdmin()
 
-  const tag = await prisma.blogTag.findUnique({ where: { id: tagId } })
+  const tag = await prisma.blogTag.findUnique({ where: { id } })
 
   if (!tag) {
     throw new Error('标签不存在')
@@ -63,15 +63,15 @@ export async function deleteBlogTagById(tagId: number) {
 
   return await prisma.blogTag.delete({
     where: {
-      id: tagId,
+      id,
     },
   })
 }
 
-export async function deleteNoteTagById(tagId: number) {
+export async function deleteNoteTagById(id: number) {
   await requireAdmin()
 
-  const tag = await prisma.noteTag.findUnique({ where: { id: tagId } })
+  const tag = await prisma.noteTag.findUnique({ where: { id } })
 
   if (!tag) {
     throw new Error('标签不存在')
@@ -81,21 +81,21 @@ export async function deleteNoteTagById(tagId: number) {
 
   return await prisma.noteTag.delete({
     where: {
-      id: tagId,
+      id,
     },
   })
 }
 
-export async function updateBlogTagById(values: WithTagIdValues) {
+export async function updateBlogTagById(values: UpdateTagNameDTO) {
   await requireAdmin()
 
-  const { tagId, tagName } = values
+  const { id, tagName } = values
 
   const existingTag = await prisma.blogTag.findFirst({
     where: {
       tagName,
       NOT: {
-        id: tagId,
+        id,
       },
     },
   })
@@ -108,7 +108,7 @@ export async function updateBlogTagById(values: WithTagIdValues) {
 
   return await prisma.blogTag.update({
     where: {
-      id: tagId,
+      id,
     },
     data: {
       tagName,
@@ -116,16 +116,16 @@ export async function updateBlogTagById(values: WithTagIdValues) {
   })
 }
 
-export async function updateNoteTagById(values: WithTagIdValues) {
+export async function updateNoteTagById(values: UpdateTagNameDTO) {
   await requireAdmin()
 
-  const { tagId, tagName } = values
+  const { id, tagName } = values
 
   const existingTag = await prisma.noteTag.findFirst({
     where: {
       tagName,
       NOT: {
-        id: tagId,
+        id,
       },
     },
   })
@@ -138,7 +138,7 @@ export async function updateNoteTagById(values: WithTagIdValues) {
 
   return await prisma.noteTag.update({
     where: {
-      id: tagId,
+      id,
     },
     data: {
       tagName,

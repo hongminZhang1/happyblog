@@ -1,6 +1,6 @@
 'use client'
 
-import type { BlogTag, NoteTag } from '@prisma/client'
+import type { WithCountTagDTO } from '@/actions/tags/type'
 import type { ColumnDef } from '@tanstack/react-table'
 import TagItemBadge from '@/components/shared/tag-item-badge'
 import { Badge } from '@/components/ui/badge'
@@ -16,11 +16,7 @@ import {
 import ActionButtons from './action-buttons'
 
 // * 后序整一个分类排序
-type WithCountBlogTagOrNoteTag =
-  | (BlogTag & { count: number })
-  | (NoteTag & { count: number })
-
-export const columns: ColumnDef<WithCountBlogTagOrNoteTag>[] = [
+export const columns: ColumnDef<WithCountTagDTO>[] = [
   {
     accessorKey: 'tagName',
     header: () => {
@@ -96,7 +92,7 @@ export const columns: ColumnDef<WithCountBlogTagOrNoteTag>[] = [
     cell: ({ row }) => {
       const { id, tagName, tagType } = row.original
 
-      return <ActionButtons tagId={id} tagName={tagName} tagType={tagType} />
+      return <ActionButtons id={id} tagName={tagName} tagType={tagType} />
     },
   },
 ]

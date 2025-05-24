@@ -27,7 +27,7 @@ export default function DeleteTagModal() {
             className="cursor-pointer"
             type="submit"
             onClick={() => {
-              ;(payload as () => void)()
+              typeof payload === 'function' && payload()
             }}
           >
             确定
