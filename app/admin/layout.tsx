@@ -1,6 +1,5 @@
 import { ModalProvider } from '@/components/provider/modal-provider'
 import { Toaster } from '@/components/ui/sonner'
-import { ADMIN_ONLY } from '@/config/constant'
 import { noPermission } from '@/lib/auth'
 import AdminNavbar from '@/modules/admin/layout/admin-layout-header'
 import { SessionProvider } from 'next-auth/react'
@@ -11,8 +10,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  // * config/constant/index.ts 中配置了只允许 admin 访问后台
-  if (ADMIN_ONLY && (await noPermission())) {
+  if (await noPermission()) {
     redirect('/')
   }
 
