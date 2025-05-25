@@ -5,10 +5,10 @@ import NoteListTable from './internal/note-list-table'
 import { NoteSearch } from './internal/note-search'
 import { NoteTagsContainer } from './internal/note-tags-container'
 
-export default async function AdminNotePage() {
-  const allNotesPromise = getAllNotes()
-  const initialDataPromise = getTagsOnNote()
+const allNotesPromise = getAllNotes()
+const initialDataPromise = getTagsOnNote()
 
+export default async function AdminNotePage() {
   return (
     <main className="w-full flex flex-col gap-2">
       <NoteSearch />
