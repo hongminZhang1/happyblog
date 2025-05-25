@@ -3,12 +3,18 @@
 import type { WithTagsBlog } from '@/store/use-blog-store'
 import { useBlogStore } from '@/store/use-blog-store'
 import { motion } from 'motion/react'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import { columns } from './blog-table-column'
 import { DataTable } from './data-table'
 
-export default function BlogListTable({ initialData }: { initialData: WithTagsBlog[] }) {
+export default function BlogListTable({ initialDataPromise }: { initialDataPromise: Promise<WithTagsBlog[]> }) {
   const { blogs, setBlogs, isFirstRender, markRendered } = useBlogStore()
+
+  let initialData: Awaited<typeof initialDataPromise>
+
+  if (isFirstRender) {
+    initialData = use(initialDataPromise)
+  }
 
   useEffect(() => {
     if (isFirstRender) {

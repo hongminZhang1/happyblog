@@ -3,12 +3,18 @@
 import type { WithTagsNote } from '@/store/use-note-store'
 import { useNoteStore } from '@/store/use-note-store'
 import { motion } from 'motion/react'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './note-table-column'
 
-export default function NoteListTable({ initialData }: { initialData: WithTagsNote[] }) {
+export default function NoteListTable({ initialDataPromise }: { initialDataPromise: Promise<WithTagsNote[]> }) {
   const { notes, setNotes, isFirstRender, markRendered } = useNoteStore()
+
+  let initialData: Awaited<typeof initialDataPromise>
+
+  if (isFirstRender) {
+    initialData = use(initialDataPromise)
+  }
 
   useEffect(() => {
     if (isFirstRender) {

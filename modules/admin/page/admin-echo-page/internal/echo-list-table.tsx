@@ -3,12 +3,18 @@
 import type { Echo } from '@prisma/client'
 import { useEchoStore } from '@/store/use-echo-store'
 import { motion } from 'motion/react'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './echo-table-column'
 
-export default function EchoListTable({ initialData }: { initialData: Echo[] }) {
+export default function EchoListTable({ initialPromiseData }: { initialPromiseData: Promise<Echo[]> }) {
   const { echos, setEchos, isFirstRender, markRendered } = useEchoStore()
+
+  let initialData: Awaited<typeof initialPromiseData>
+
+  if (isFirstRender) {
+    initialData = use(initialPromiseData)
+  }
 
   useEffect(() => {
     if (isFirstRender) {

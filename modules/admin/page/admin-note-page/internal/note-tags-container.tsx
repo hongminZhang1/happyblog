@@ -1,9 +1,9 @@
 'use client'
 
+import type { getTagsOnNote } from '@/actions/notes'
 import type {
   CarouselApi,
 } from '@/components/ui/carousel'
-import type { NoteTag } from '@prisma/client'
 import { NoteTagItemToggle } from '@/components/shared/tag-item-toggle'
 import {
   Carousel,
@@ -11,13 +11,29 @@ import {
   CarouselItem,
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
+import { useNoteTagStore } from '@/store/use-note-tag-store'
 import { motion } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 
-export function NoteTagsContainer({ tags }: { tags: NoteTag['tagName'][] }) {
+export function NoteTagsContainer({ initialDataPromise }: { initialDataPromise: ReturnType<typeof getTagsOnNote> }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
+  const { noteTags, isFirstRender, markRendered, setNoteTags } = useNoteTagStore()
+
+  let initialData: Awaited<ReturnType<typeof getTagsOnNote>>
+
+  if (isFirstRender) {
+    initialData = use(initialDataPromise)
+  }
+
+  useEffect(() => {
+    if (isFirstRender) {
+      const tags = initialData.map(t => t.tagName)
+      setNoteTags(tags)
+      markRendered()
+    }
+  })
 
   useEffect(() => {
     if (!api) {
@@ -59,14 +75,14 @@ export function NoteTagsContainer({ tags }: { tags: NoteTag['tagName'][] }) {
       />
 
       <CarouselContent className="shrink-0 w-fit max-w-[calc(100vw-4rem)]">
-        {tags.length === 0
+        {noteTags.length === 0
           ? (
               <CarouselItem className="text-muted-foreground m-auto">
                 没有标签 (｡•́︿•̀｡)
               </CarouselItem>
             )
           : (
-              tags.map((tag, i) => (
+              noteTags.map((tag, i) => (
                 <CarouselItem className="basis-auto" key={tag.toLowerCase()}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

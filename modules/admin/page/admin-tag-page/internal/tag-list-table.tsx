@@ -3,12 +3,18 @@
 import type { Tag } from '@/store/use-tag-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { motion } from 'motion/react'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './tag-table-column'
 
-export default function TagListTable({ initialData }: { initialData: Tag[] }) {
+export default function TagListTable({ initialDataPromise }: { initialDataPromise: Promise<Tag[]> }) {
   const { tags, setTags, isFirstRender, markRendered } = useTagStore()
+
+  let initialData: Awaited<typeof initialDataPromise>
+
+  if (isFirstRender) {
+    initialData = use(initialDataPromise)
+  }
 
   useEffect(() => {
     if (isFirstRender) {

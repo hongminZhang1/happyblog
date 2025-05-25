@@ -24,7 +24,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useBlogTagStore } from '@/store/use-blog-tag-store'
 import { useModalStore } from '@/store/use-modal-store'
+import { useNoteTagStore } from '@/store/use-note-tag-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TagType } from '@prisma/client'
@@ -36,6 +38,8 @@ export default function EditTagModal() {
   const { modalType, onModalClose, payload } = useModalStore()
   const isModalOpen = modalType === 'editTagModal'
   const { setTags } = useTagStore()
+  const { updateBlogTag } = useBlogTagStore()
+  const { updateNoteTag } = useNoteTagStore()
   const { id, tagName, tagType } = payload
     ? (payload as UpdateTagNameDTO)
     : {}
@@ -63,15 +67,20 @@ export default function EditTagModal() {
   const handleTagNameChange = async (values: UpdateTagNameDTO) => {
     try {
       switch (tagType) {
-        case TagType.BLOG:
-          await updateBlogTagById(values)
+        case TagType.BLOG: {
+          const tag = await updateBlogTagById(values)
+          updateBlogTag(tagName ?? '', tag.tagName)
           break
-        case TagType.NOTE:
-          await updateNoteTagById(values)
+        }
+        case TagType.NOTE: {
+          const tag = await updateNoteTagById(values)
+          updateNoteTag(tagName ?? '', tag.tagName)
           break
+        }
         default:
           throw new Error('标签类型错误!')
       }
+
       const allTags = await getAllTags()
       setTags(allTags)
 
