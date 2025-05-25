@@ -1,13 +1,13 @@
 'use client'
 
-import type { WithTagsBlog } from '@/store/use-blog-store'
+import type { BlogListItem } from '@/store/use-blog-store'
 import { useBlogStore } from '@/store/use-blog-store'
 import { motion } from 'motion/react'
 import { use, useEffect } from 'react'
 import { columns } from './blog-table-column'
 import { DataTable } from './data-table'
 
-export default function BlogListTable({ initialDataPromise }: { initialDataPromise: Promise<WithTagsBlog[]> }) {
+export default function BlogListTable({ initialDataPromise }: { initialDataPromise: Promise<BlogListItem[]> }) {
   const { blogs, setBlogs, isFirstRender, markRendered } = useBlogStore()
 
   let initialData: Awaited<typeof initialDataPromise>

@@ -1,6 +1,6 @@
 'use client'
 
-import type { WithTagsBlog } from '@/store/use-blog-store'
+import type { BlogListItem } from '@/store/use-blog-store'
 import type { ColumnDef } from '@tanstack/react-table'
 import TagItemBadge from '@/components/shared/tag-item-badge'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,7 @@ import {
 import ActionButtons from './action-buttons'
 import PublishToggleSwitch from './publish-toggle-switch'
 
-export const columns: ColumnDef<WithTagsBlog>[] = [
+export const columns: ColumnDef<BlogListItem>[] = [
   {
     accessorKey: 'title',
     header: () => {

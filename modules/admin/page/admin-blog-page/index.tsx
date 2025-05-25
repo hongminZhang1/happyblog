@@ -1,11 +1,11 @@
-import { getAllBlogs, getTagsOnBlog } from '@/actions/blogs'
+import { getBlogList, getTagsOnBlog } from '@/actions/blogs'
 import Loading from '@/components/shared/loading'
 import { Suspense } from 'react'
 import BlogListTable from './internal/blog-list-table'
 import { BlogSearch } from './internal/blog-search'
 import { BlogTagsContainer } from './internal/blog-tags-container'
 
-const allBlogsPromise = getAllBlogs()
+const allBlogsPromise = getBlogList()
 const initialDataPromise = getTagsOnBlog()
 
 export default function AdminBlogPage() {

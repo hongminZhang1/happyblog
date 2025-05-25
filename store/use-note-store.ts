@@ -1,7 +1,7 @@
-import type { getAllNotes } from '@/actions/notes'
+import type { getNoteList } from '@/actions/notes'
 import { create } from 'zustand'
 
-export type WithTagsNote = Awaited<ReturnType<typeof getAllNotes>>[number]
+export type WithTagsNote = Awaited<ReturnType<typeof getNoteList>>[number]
 
 interface INoteStore {
   notes: WithTagsNote[]

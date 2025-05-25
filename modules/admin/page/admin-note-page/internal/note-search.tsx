@@ -1,6 +1,6 @@
 'use client'
 
-import { getAllNotes, getQueryNotes } from '@/actions/notes'
+import { getNoteList, getQueryNotes } from '@/actions/notes'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useQueryLoader } from '@/hooks/use-query-loader'
@@ -12,7 +12,7 @@ import Link from 'next/link'
 export function NoteSearch() {
   const { setNotes } = useNoteStore()
   const { query, setQuery, fetchData, resetData } = useQueryLoader(
-    getAllNotes,
+    getNoteList,
     getQueryNotes,
     setNotes,
   )

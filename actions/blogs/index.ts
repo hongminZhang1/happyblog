@@ -156,6 +156,7 @@ export async function updateBlogById(values: UpdateArticleDTO) {
   })
 }
 
+// todo: 缓存
 export async function getQueryBlogs(blogTitle: string) {
   return await prisma.blog.findMany({
     where: {
@@ -169,9 +170,15 @@ export async function getQueryBlogs(blogTitle: string) {
   })
 }
 
-export async function getAllBlogs() {
+export async function getBlogList() {
   return await prisma.blog.findMany({
-    include: {
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      isPublished: true,
+      createdAt: true,
+      updatedAt: true,
       tags: true,
     },
   })

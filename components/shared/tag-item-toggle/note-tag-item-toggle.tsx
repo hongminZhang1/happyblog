@@ -1,6 +1,6 @@
 'use client'
 
-import { getAllNotes, getNotesBySelectedTagName } from '@/actions/notes'
+import { getNoteList, getNotesBySelectedTagName } from '@/actions/notes'
 import { Toggle } from '@/components/ui/toggle'
 import { useNoteStore } from '@/store/use-note-store'
 import { useSelectedTagStore } from '@/store/use-selected-tag-store'
@@ -30,7 +30,7 @@ export function NoteTagItemToggle({
     try {
       const blogs
         = updatedTags.length === 0
-          ? await getAllNotes()
+          ? await getNoteList()
           : await getNotesBySelectedTagName(updatedTags)
       setNotes(blogs)
     }

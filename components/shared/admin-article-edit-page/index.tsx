@@ -1,6 +1,6 @@
 'use client'
 
-import type { Blog, BlogTag, Note, NoteTag } from '@prisma/client'
+import type { Blog, Note } from '@prisma/client'
 import type { ArticleDTO } from './type'
 import { createBlog, updateBlogById } from '@/actions/blogs'
 import { createNote, updateNoteById } from '@/actions/notes'
@@ -16,7 +16,9 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import { useBlogTagStore } from '@/store/use-blog-tag-store'
 import { useModalStore } from '@/store/use-modal-store'
+import { useNoteTagStore } from '@/store/use-note-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TagType } from '@prisma/client'
 import { File } from 'lucide-react'
@@ -37,15 +39,19 @@ function parseEditPageTypeFromUrl(url: string): TagType {
 export default function AdminArticleEditPage({
   article,
   relatedArticleTagNames,
-  allTags,
 }: {
   article: Blog | Note | null
   relatedArticleTagNames?: string[]
-  allTags: BlogTag[] | NoteTag[]
 }) {
   const router = useRouter()
   const { setModalOpen } = useModalStore()
   const pathname = usePathname()
+  const editPageType = parseEditPageTypeFromUrl(pathname)
+
+  const { blogTags } = useBlogTagStore()
+  const { noteTags } = useNoteTagStore()
+
+  const allTags = editPageType === 'BLOG' ? blogTags : noteTags
 
   const form = useForm<ArticleDTO>({
     resolver: zodResolver(ArticleSchema),
@@ -61,8 +67,6 @@ export default function AdminArticleEditPage({
 
   async function onSubmit(values: ArticleDTO) {
     try {
-      const editPageType = parseEditPageTypeFromUrl(pathname)
-
       if (article?.id) {
         switch (editPageType) {
           case TagType.BLOG:
@@ -78,6 +82,7 @@ export default function AdminArticleEditPage({
       else {
         switch (editPageType) {
           case TagType.BLOG:
+            // todo: 刷新缓存 or 本地更新
             await createBlog(values)
             break
           case TagType.NOTE:
@@ -166,8 +171,8 @@ export default function AdminArticleEditPage({
                   <Combobox
                     options={
                       allTags.map(el => ({
-                        label: el.tagName,
-                        value: el.tagName,
+                        label: el,
+                        value: el,
                       })) ?? []
                     }
                     multiple

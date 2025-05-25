@@ -1,6 +1,6 @@
 'use client'
 
-import { getAllBlogs, getQueryBlogs } from '@/actions/blogs'
+import { getBlogList, getQueryBlogs } from '@/actions/blogs'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useQueryLoader } from '@/hooks/use-query-loader'
@@ -12,7 +12,7 @@ import Link from 'next/link'
 export function BlogSearch() {
   const { setBlogs } = useBlogStore()
   const { query, fetchData, setQuery, resetData } = useQueryLoader(
-    getAllBlogs,
+    getBlogList,
     getQueryBlogs,
     setBlogs,
   )

@@ -168,9 +168,15 @@ export async function getQueryNotes(noteTitle: string) {
   })
 }
 
-export async function getAllNotes() {
+export async function getNoteList() {
   return await prisma.note.findMany({
-    include: {
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      isPublished: true,
+      createdAt: true,
+      updatedAt: true,
       tags: true,
     },
   })

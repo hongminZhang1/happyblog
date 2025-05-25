@@ -1,12 +1,12 @@
-import type { getAllBlogs } from '@/actions/blogs'
+import type { getBlogList } from '@/actions/blogs'
 import { create } from 'zustand'
 
-export type WithTagsBlog = Awaited<ReturnType<typeof getAllBlogs>>[number]
+export type BlogListItem = Awaited<ReturnType<typeof getBlogList>>[number]
 
 interface IBlogStore {
-  blogs: WithTagsBlog[]
+  blogs: BlogListItem[]
   isFirstRender: boolean
-  setBlogs: (blogs: WithTagsBlog[]) => void
+  setBlogs: (blogs: BlogListItem[]) => void
   markRendered: () => void
 }
 
