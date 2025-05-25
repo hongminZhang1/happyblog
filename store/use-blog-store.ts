@@ -9,6 +9,7 @@ interface IBlogStore {
   setBlogs: (blogs: BlogListItem[]) => void
   appendBlog: (blog: BlogListItem) => void
   updateBlog: (blog: BlogListItem) => void
+  removeBlog: (blog: BlogListItem['id']) => void
   markRendered: () => void
 }
 
@@ -23,6 +24,10 @@ export const useBlogStore = create<IBlogStore>(set => ({
 
   updateBlog: blog => set(({ blogs }) => ({
     blogs: blogs.map(blogItem => blogItem.id === blog.id ? blog : blogItem),
+  })),
+
+  removeBlog: blogId => set(({ blogs }) => ({
+    blogs: blogs.filter(blogItem => blogItem.id !== blogId),
   })),
 
   markRendered: () => set({ isFirstRender: false }),

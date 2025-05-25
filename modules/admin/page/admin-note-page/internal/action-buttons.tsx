@@ -1,8 +1,10 @@
 import { deleteNoteById } from '@/actions/notes'
+import { getAllTags } from '@/actions/tags'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useModalStore } from '@/store/use-modal-store'
 import { useNoteStore } from '@/store/use-note-store'
+import { useTagStore } from '@/store/use-tag-store'
 import { Edit2, Eye, Trash } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -17,13 +19,14 @@ export default function ActionButtons({
   title: string
 }) {
   const { setModalOpen } = useModalStore()
-  const { setNotes, notes } = useNoteStore()
+  const { removeNote } = useNoteStore()
+  const { setTags } = useTagStore()
 
   const handleDelete = async () => {
     try {
-      await deleteNoteById(noteId)
-      const filtered = notes.filter(blog => blog.id !== noteId)
-      setNotes(filtered)
+      const [, allTags] = await Promise.all([deleteNoteById(noteId), getAllTags()])
+      removeNote(noteId)
+      setTags(allTags)
       toast.success(`删除成功`)
     }
     catch (error) {

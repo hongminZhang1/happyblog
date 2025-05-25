@@ -1,8 +1,10 @@
 import { deleteBlogById } from '@/actions/blogs'
+import { getAllTags } from '@/actions/tags'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useBlogStore } from '@/store/use-blog-store'
 import { useModalStore } from '@/store/use-modal-store'
+import { useTagStore } from '@/store/use-tag-store'
 import { Edit2, Eye, Trash } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -17,13 +19,14 @@ export default function ActionButtons({
   title: string
 }) {
   const { setModalOpen } = useModalStore()
-  const { blogs, setBlogs } = useBlogStore()
+  const { removeBlog } = useBlogStore()
+  const { setTags } = useTagStore()
 
   const handleDelete = async () => {
     try {
-      await deleteBlogById(blogId)
-      const filtered = blogs.filter(blog => blog.id !== blogId)
-      setBlogs(filtered)
+      const [, allTags] = await Promise.all([deleteBlogById(blogId), getAllTags()])
+      removeBlog(blogId)
+      setTags(allTags)
       toast.success(`删除成功`)
     }
     catch (error) {

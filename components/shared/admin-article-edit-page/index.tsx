@@ -4,6 +4,7 @@ import type { Blog, Note } from '@prisma/client'
 import type { ArticleDTO } from './type'
 import { createBlog, updateBlogById } from '@/actions/blogs'
 import { createNote, updateNoteById } from '@/actions/notes'
+import { getAllTags } from '@/actions/tags'
 import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/ui/combobox'
 import {
@@ -21,6 +22,7 @@ import { useBlogTagStore } from '@/store/use-blog-tag-store'
 import { useModalStore } from '@/store/use-modal-store'
 import { useNoteStore } from '@/store/use-note-store'
 import { useNoteTagStore } from '@/store/use-note-tag-store'
+import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TagType } from '@prisma/client'
 import { File } from 'lucide-react'
@@ -54,6 +56,7 @@ export default function AdminArticleEditPage({
   const { noteTags } = useNoteTagStore()
   const { appendBlog, updateBlog } = useBlogStore()
   const { appendNote, updateNote } = useNoteStore()
+  const { setTags } = useTagStore()
 
   const allTags = editPageType === 'BLOG' ? blogTags : noteTags
 
@@ -103,6 +106,8 @@ export default function AdminArticleEditPage({
             throw new Error(`文章类型错误`)
         }
       }
+      const allTags = await getAllTags()
+      setTags(allTags)
 
       toast.success('保存成功')
       router.push(`/admin/${editPageType.toLowerCase()}/edit/${values.slug}`)

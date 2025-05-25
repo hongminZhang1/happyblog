@@ -9,6 +9,7 @@ interface INoteStore {
   setNotes: (notes: NoteListItem[]) => void
   appendNote: (blog: NoteListItem) => void
   updateNote: (note: NoteListItem) => void
+  removeNote: (noteId: NoteListItem['id']) => void
   markRendered: () => void
 }
 
@@ -23,6 +24,10 @@ export const useNoteStore = create<INoteStore>(set => ({
 
   updateNote: note => set(({ notes }) => ({
     notes: notes.map(noteItem => noteItem.id === note.id ? note : noteItem),
+  })),
+
+  removeNote: noteId => set(({ notes }) => ({
+    notes: notes.filter(noteItem => noteItem.id !== noteId),
   })),
 
   markRendered: () => set({ isFirstRender: false }),
