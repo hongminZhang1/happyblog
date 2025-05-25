@@ -189,14 +189,6 @@ export async function getBlogList() {
   })
 }
 
-export async function getTagsOnBlog() {
-  return await prisma.blogTag.findMany({
-    select: {
-      tagName: true,
-    },
-  })
-}
-
 export async function getBlogsBySelectedTagName(tagNamesArray: string[]) {
   const blogs = await prisma.blog.findMany({
     where: {

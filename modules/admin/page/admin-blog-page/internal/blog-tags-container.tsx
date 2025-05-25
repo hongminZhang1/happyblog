@@ -1,6 +1,6 @@
 'use client'
 
-import type { getTagsOnBlog } from '@/actions/blogs'
+import type { BlogTagItem } from '@/app/api/(cache)/blog/getBlogTags/route'
 import type {
   CarouselApi,
 } from '@/components/ui/carousel'
@@ -14,12 +14,12 @@ import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
 import { use, useEffect, useState } from 'react'
 
-export function BlogTagsContainer({ initialDataPromise }: { initialDataPromise: ReturnType<typeof getTagsOnBlog> }) {
+export function BlogTagsContainer({ blogTagsPromise }: { blogTagsPromise: Promise<BlogTagItem[]> }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
 
-  const initialData = use(initialDataPromise).map(tag => tag.tagName)
+  const blogTags = use(blogTagsPromise).map(tag => tag.tagName)
 
   useEffect(() => {
     if (!api)
@@ -58,14 +58,14 @@ export function BlogTagsContainer({ initialDataPromise }: { initialDataPromise: 
         )}
       />
       <CarouselContent className="shrink-0 w-fit max-w-[calc(100vw-4rem)]">
-        {initialData.length === 0
+        {blogTags.length === 0
           ? (
               <CarouselItem className="text-muted-foreground m-auto">
                 没有标签 (｡•́︿•̀｡)
               </CarouselItem>
             )
           : (
-              initialData.map((tag, i) => (
+              blogTags.map((tag, i) => (
                 <CarouselItem className="basis-auto" key={tag.toLowerCase()}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

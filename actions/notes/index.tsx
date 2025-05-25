@@ -188,14 +188,6 @@ export async function getNoteList() {
   })
 }
 
-export async function getTagsOnNote() {
-  return await prisma.noteTag.findMany({
-    select: {
-      tagName: true,
-    },
-  })
-}
-
 export async function getNotesBySelectedTagName(tagNamesArray: string[]) {
   const notes = await prisma.note.findMany({
     where: {

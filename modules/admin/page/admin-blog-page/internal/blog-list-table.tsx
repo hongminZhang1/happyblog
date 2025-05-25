@@ -6,8 +6,8 @@ import { use } from 'react'
 import { columns } from './blog-table-column'
 import { DataTable } from './data-table'
 
-export default function BlogListTable({ initialDataPromise }: { initialDataPromise: Promise<BlogListItem[]> }) {
-  const initialData = use(initialDataPromise)
+export default function BlogListTable({ blogListPromise }: { blogListPromise: Promise<BlogListItem[]> }) {
+  const initialData = use(blogListPromise)
 
   return (
     <motion.main

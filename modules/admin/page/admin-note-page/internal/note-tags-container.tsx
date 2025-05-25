@@ -1,6 +1,6 @@
 'use client'
 
-import type { getTagsOnNote } from '@/actions/notes'
+import type { getNoteTags } from '@/actions/tags'
 import type {
   CarouselApi,
 } from '@/components/ui/carousel'
@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
 import { use, useEffect, useState } from 'react'
 
-export function NoteTagsContainer({ initialDataPromise }: { initialDataPromise: ReturnType<typeof getTagsOnNote> }) {
+export function NoteTagsContainer({ initialDataPromise }: { initialDataPromise: ReturnType<typeof getNoteTags> }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)

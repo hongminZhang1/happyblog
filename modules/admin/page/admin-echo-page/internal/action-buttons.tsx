@@ -1,6 +1,5 @@
 import { deleteEchoById } from '@/actions/echos'
 import { Button } from '@/components/ui/button'
-import { useEchoStore } from '@/store/use-echo-store'
 import { useModalStore } from '@/store/use-modal-store'
 import { Edit2, Trash } from 'lucide-react'
 import { toast } from 'sonner'
