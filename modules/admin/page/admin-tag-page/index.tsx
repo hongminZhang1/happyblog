@@ -4,9 +4,9 @@ import { Suspense } from 'react'
 import TagListTable from './internal/tag-list-table'
 import TagSearch from './internal/tag-search'
 
-const tags = getAllTags()
-
 export default async function AdminTagPage() {
+  const tags = getAllTags()
+
   return (
     <main className="w-full flex flex-col gap-2">
       <TagSearch />

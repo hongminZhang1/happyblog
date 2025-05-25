@@ -8,20 +8,11 @@ import { DataTable } from './data-table'
 import { columns } from './echo-table-column'
 
 export default function EchoListTable({ initialPromiseData }: { initialPromiseData: Promise<Echo[]> }) {
-  const { echos, setEchos, isFirstRender, markRendered } = useEchoStore()
-
-  let initialData: Awaited<typeof initialPromiseData>
-
-  if (isFirstRender) {
-    initialData = use(initialPromiseData)
-  }
+  const initialData = use(initialPromiseData)
+  const { setEchos } = useEchoStore()
 
   useEffect(() => {
-    if (isFirstRender) {
-      setEchos(initialData)
-      markRendered()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setEchos(initialData)
   }, [])
 
   return (
@@ -35,7 +26,7 @@ export default function EchoListTable({ initialPromiseData }: { initialPromiseDa
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={echos} />
+      <DataTable columns={columns} data={initialData} />
     </motion.main>
   )
 }

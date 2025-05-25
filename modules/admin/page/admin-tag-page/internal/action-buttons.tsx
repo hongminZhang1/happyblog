@@ -1,8 +1,6 @@
 import { deleteBlogTagById, deleteNoteTagById, getAllTags } from '@/actions/tags'
 import { Button } from '@/components/ui/button'
-import { useBlogTagStore } from '@/store/use-blog-tag-store'
 import { useModalStore } from '@/store/use-modal-store'
-import { useNoteTagStore } from '@/store/use-note-tag-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { TagType } from '@prisma/client'
 import { Edit2, Trash } from 'lucide-react'
@@ -18,23 +16,17 @@ export default function ActionButtons({
   tagType: TagType
 }) {
   const { setModalOpen, onModalClose } = useModalStore()
-  const { removeBlogTag } = useBlogTagStore()
-  const { removeNoteTag } = useNoteTagStore()
   const { setTags } = useTagStore()
 
   const handleDelete = async () => {
     try {
       switch (tagType) {
-        case TagType.BLOG: {
-          const tag = await deleteBlogTagById(id)
-          removeBlogTag(tag.tagName)
+        case TagType.BLOG:
+          await deleteBlogTagById(id)
           break
-        }
-        case TagType.NOTE: {
-          const tag = await deleteNoteTagById(id)
-          removeNoteTag(tag.tagName)
+        case TagType.NOTE:
+          await deleteNoteTagById(id)
           break
-        }
         default:
           throw new Error('标签类型错误或 id 不存在!')
       }

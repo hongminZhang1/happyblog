@@ -7,7 +7,6 @@ import { useSelectedTagStore } from '@/store/use-selected-tag-store'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 
-// ! 后序需要重写样式, 现在稍微有些看不出来
 export function BlogTagItemToggle({
   tag,
 }: {
@@ -18,12 +17,8 @@ export function BlogTagItemToggle({
   const { setBlogs } = useBlogStore()
 
   // * 切换页面时, 把保存的状态清空, 防止污染搜索
-  useEffect(() => {
-    return () => {
-      setSelectedTags([])
-    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  useEffect(() => () => setSelectedTags([]), [])
 
   const handleSelectedTagChange = async (selected: boolean) => {
     const updatedTags = selected

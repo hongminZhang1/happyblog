@@ -1,6 +1,6 @@
 'use client'
 
-import type { Blog, Note } from '@prisma/client'
+import type { Blog, BlogTag, Note, NoteTag } from '@prisma/client'
 import type { ArticleDTO } from './type'
 import { createBlog, updateBlogById } from '@/actions/blogs'
 import { createNote, updateNoteById } from '@/actions/notes'
@@ -17,11 +17,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { useBlogStore } from '@/store/use-blog-store'
-import { useBlogTagStore } from '@/store/use-blog-tag-store'
 import { useModalStore } from '@/store/use-modal-store'
-import { useNoteStore } from '@/store/use-note-store'
-import { useNoteTagStore } from '@/store/use-note-tag-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TagType } from '@prisma/client'
@@ -43,22 +39,18 @@ function parseEditPageTypeFromUrl(url: string): TagType {
 export default function AdminArticleEditPage({
   article,
   relatedArticleTagNames,
+  allTags,
 }: {
   article: Blog | Note | null
   relatedArticleTagNames?: string[]
+  allTags: BlogTag[] | NoteTag[]
 }) {
   const router = useRouter()
   const { setModalOpen } = useModalStore()
   const pathname = usePathname()
   const editPageType = parseEditPageTypeFromUrl(pathname)
 
-  const { blogTags } = useBlogTagStore()
-  const { noteTags } = useNoteTagStore()
-  const { appendBlog, updateBlog } = useBlogStore()
-  const { appendNote, updateNote } = useNoteStore()
   const { setTags } = useTagStore()
-
-  const allTags = editPageType === 'BLOG' ? blogTags : noteTags
 
   const form = useForm<ArticleDTO>({
     resolver: zodResolver(ArticleSchema),
@@ -76,32 +68,24 @@ export default function AdminArticleEditPage({
     try {
       if (article?.id) {
         switch (editPageType) {
-          case TagType.BLOG: {
-            const { createdAt, id, isPublished, slug, tags, title, updatedAt } = await updateBlogById({ ...values, id: article.id })
-            updateBlog({ createdAt, id, isPublished, slug, tags, title, updatedAt })
+          case TagType.BLOG:
+            await updateBlogById({ ...values, id: article.id })
             break
-          }
-          case TagType.NOTE: {
-            const { tags, createdAt, id, isPublished, slug, title, updatedAt } = await updateNoteById({ ...values, id: article.id })
-            updateNote({ createdAt, id, isPublished, slug, tags, title, updatedAt })
+          case TagType.NOTE:
+            await updateNoteById({ ...values, id: article.id })
             break
-          }
           default:
             throw new Error(`文章类型错误`)
         }
       }
       else {
         switch (editPageType) {
-          case TagType.BLOG: {
-            const { id, createdAt, isPublished, slug, title, updatedAt, tags } = await createBlog(values)
-            appendBlog({ id, createdAt, isPublished, slug, title, updatedAt, tags })
+          case TagType.BLOG:
+            await createBlog(values)
             break
-          }
-          case TagType.NOTE: {
-            const { id, createdAt, isPublished, slug, title, updatedAt, tags } = await createNote(values)
-            appendNote({ createdAt, id, isPublished, slug, tags, title, updatedAt })
+          case TagType.NOTE:
+            await createNote(values)
             break
-          }
           default:
             throw new Error(`文章类型错误`)
         }
@@ -187,8 +171,8 @@ export default function AdminArticleEditPage({
                   <Combobox
                     options={
                       allTags.map(el => ({
-                        label: el,
-                        value: el,
+                        label: el.tagName,
+                        value: el.tagName,
                       })) ?? []
                     }
                     multiple

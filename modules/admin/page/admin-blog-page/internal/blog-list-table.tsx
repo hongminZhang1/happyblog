@@ -1,28 +1,13 @@
 'use client'
 
 import type { BlogListItem } from '@/store/use-blog-store'
-import { useBlogStore } from '@/store/use-blog-store'
 import { motion } from 'motion/react'
-import { use, useEffect } from 'react'
+import { use } from 'react'
 import { columns } from './blog-table-column'
 import { DataTable } from './data-table'
 
 export default function BlogListTable({ initialDataPromise }: { initialDataPromise: Promise<BlogListItem[]> }) {
-  const { blogs, setBlogs, isFirstRender, markRendered } = useBlogStore()
-
-  let initialData: Awaited<typeof initialDataPromise>
-
-  if (isFirstRender) {
-    initialData = use(initialDataPromise)
-  }
-
-  useEffect(() => {
-    if (isFirstRender) {
-      setBlogs(initialData)
-      markRendered()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const initialData = use(initialDataPromise)
 
   return (
     <motion.main
@@ -35,7 +20,7 @@ export default function BlogListTable({ initialDataPromise }: { initialDataPromi
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={blogs} />
+      <DataTable columns={columns} data={initialData} />
     </motion.main>
   )
 }

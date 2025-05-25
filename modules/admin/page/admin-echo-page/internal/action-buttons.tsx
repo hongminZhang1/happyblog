@@ -17,14 +17,11 @@ export default function ActionButtons({
   reference: string
 }) {
   const { setModalOpen } = useModalStore()
-  const { setEchos, echos } = useEchoStore()
 
   const handleEchoDelete = async () => {
     try {
       await deleteEchoById(id)
 
-      const newTables = echos.filter(echo => echo.id !== id)
-      setEchos(newTables)
       toast.success(`删除成功~`)
     }
     catch (error) {

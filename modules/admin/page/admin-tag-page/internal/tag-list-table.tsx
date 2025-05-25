@@ -1,28 +1,13 @@
 'use client'
 
 import type { Tag } from '@/store/use-tag-store'
-import { useTagStore } from '@/store/use-tag-store'
 import { motion } from 'motion/react'
-import { use, useEffect } from 'react'
+import { use } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './tag-table-column'
 
 export default function TagListTable({ initialDataPromise }: { initialDataPromise: Promise<Tag[]> }) {
-  const { tags, setTags, isFirstRender, markRendered } = useTagStore()
-
-  let initialData: Awaited<typeof initialDataPromise>
-
-  if (isFirstRender) {
-    initialData = use(initialDataPromise)
-  }
-
-  useEffect(() => {
-    if (isFirstRender) {
-      setTags(initialData)
-      markRendered()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const initialData = use(initialDataPromise)
 
   return (
     <motion.main
@@ -35,7 +20,7 @@ export default function TagListTable({ initialDataPromise }: { initialDataPromis
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={tags} />
+      <DataTable columns={columns} data={initialData} />
     </motion.main>
   )
 }

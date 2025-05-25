@@ -1,4 +1,5 @@
 import { getRawBlogBySlug } from '@/actions/blogs'
+import { getBlogTags } from '@/actions/tags'
 import AdminArticleEditPage from '@/components/shared/admin-article-edit-page'
 import { requireAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
@@ -16,7 +17,7 @@ export default async function Page({
   }
 
   const slug = (await params).slug?.[0] ?? null
-  const article = slug ? await getRawBlogBySlug(slug) : await Promise.resolve(null)
+  const [article, blogTags] = await Promise.all([slug ? getRawBlogBySlug(slug) : Promise.resolve(null), getBlogTags()])
 
   const relatedBlogTagNames = article ? article.tags.map(v => v.tagName) : []
 
@@ -24,6 +25,7 @@ export default async function Page({
     <AdminArticleEditPage
       article={article}
       relatedArticleTagNames={relatedBlogTagNames}
+      allTags={blogTags}
     />
   )
 }

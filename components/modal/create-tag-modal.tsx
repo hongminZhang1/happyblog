@@ -31,9 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useBlogTagStore } from '@/store/use-blog-tag-store'
 import { useModalStore } from '@/store/use-modal-store'
-import { useNoteTagStore } from '@/store/use-note-tag-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TagType } from '@prisma/client'
@@ -45,8 +43,6 @@ export default function CreateTagModal() {
   const { modalType, onModalClose } = useModalStore()
   const isModalOpen = modalType === 'createTagModal'
   const { setTags } = useTagStore()
-  const { appendBlogTag } = useBlogTagStore()
-  const { appendNoteTag } = useNoteTagStore()
 
   const form = useForm<CreateTagDTO>({
     resolver: zodResolver(CreateTagSchema),
@@ -60,16 +56,12 @@ export default function CreateTagModal() {
   const handleCreateTag = async (values: CreateTagDTO) => {
     try {
       switch (values.tagType) {
-        case TagType.BLOG: {
-          const tag = await createBlogTag(values.tagName)
-          appendBlogTag(tag.tagName)
+        case TagType.BLOG:
+          await createBlogTag(values.tagName)
           break
-        }
-        case TagType.NOTE: {
-          const tag = await createNoteTag(values.tagName)
-          appendNoteTag(tag.tagName)
+        case TagType.NOTE:
+          await createNoteTag(values.tagName)
           break
-        }
         default:
           throw new Error('tag type 不匹配')
       }

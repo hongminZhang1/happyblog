@@ -3,7 +3,6 @@ import { getAllTags } from '@/actions/tags'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useModalStore } from '@/store/use-modal-store'
-import { useNoteStore } from '@/store/use-note-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { Edit2, Eye, Trash } from 'lucide-react'
 import Link from 'next/link'
@@ -19,13 +18,11 @@ export default function ActionButtons({
   title: string
 }) {
   const { setModalOpen } = useModalStore()
-  const { removeNote } = useNoteStore()
   const { setTags } = useTagStore()
 
   const handleDelete = async () => {
     try {
       const [, allTags] = await Promise.all([deleteNoteById(noteId), getAllTags()])
-      removeNote(noteId)
       setTags(allTags)
       toast.success(`删除成功`)
     }

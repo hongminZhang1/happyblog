@@ -1,28 +1,13 @@
 'use client'
 
 import type { NoteListItem } from '@/store/use-note-store'
-import { useNoteStore } from '@/store/use-note-store'
 import { motion } from 'motion/react'
-import { use, useEffect } from 'react'
+import { use } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './note-table-column'
 
 export default function NoteListTable({ initialDataPromise }: { initialDataPromise: Promise<NoteListItem[]> }) {
-  const { notes, setNotes, isFirstRender, markRendered } = useNoteStore()
-
-  let initialData: Awaited<typeof initialDataPromise>
-
-  if (isFirstRender) {
-    initialData = use(initialDataPromise)
-  }
-
-  useEffect(() => {
-    if (isFirstRender) {
-      setNotes(initialData)
-      markRendered()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const initialData = use(initialDataPromise)
 
   return (
     <motion.main
@@ -35,7 +20,7 @@ export default function NoteListTable({ initialDataPromise }: { initialDataPromi
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={notes} />
+      <DataTable columns={columns} data={initialData} />
     </motion.main>
   )
 }

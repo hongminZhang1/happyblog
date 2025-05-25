@@ -11,7 +11,6 @@ import {
   CarouselItem,
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
-import { useBlogTagStore } from '@/store/use-blog-tag-store'
 import { motion } from 'motion/react'
 import { use, useEffect, useState } from 'react'
 
@@ -19,22 +18,8 @@ export function BlogTagsContainer({ initialDataPromise }: { initialDataPromise: 
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
-  const { blogTags, isFirstRender, markRendered, setBlogTags } = useBlogTagStore()
 
-  let initialData: Awaited<ReturnType<typeof getTagsOnBlog>>
-
-  if (isFirstRender) {
-    initialData = use(initialDataPromise)
-  }
-
-  useEffect(() => {
-    if (isFirstRender) {
-      const tags = initialData.map(t => t.tagName)
-      setBlogTags(tags)
-      markRendered()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const initialData = use(initialDataPromise).map(tag => tag.tagName)
 
   useEffect(() => {
     if (!api)
@@ -73,14 +58,14 @@ export function BlogTagsContainer({ initialDataPromise }: { initialDataPromise: 
         )}
       />
       <CarouselContent className="shrink-0 w-fit max-w-[calc(100vw-4rem)]">
-        {blogTags.length === 0
+        {initialData.length === 0
           ? (
               <CarouselItem className="text-muted-foreground m-auto">
                 没有标签 (｡•́︿•̀｡)
               </CarouselItem>
             )
           : (
-              blogTags.map((tag, i) => (
+              initialData.map((tag, i) => (
                 <CarouselItem className="basis-auto" key={tag.toLowerCase()}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

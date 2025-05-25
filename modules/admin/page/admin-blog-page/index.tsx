@@ -5,10 +5,10 @@ import BlogListTable from './internal/blog-list-table'
 import { BlogSearch } from './internal/blog-search'
 import { BlogTagsContainer } from './internal/blog-tags-container'
 
-const allBlogsPromise = getBlogList()
-const initialDataPromise = getTagsOnBlog()
-
 export default function AdminBlogPage() {
+  const allBlogsPromise = getBlogList()
+  const initialDataPromise = getTagsOnBlog()
+
   return (
     <main className="w-full flex flex-col gap-2">
       <BlogSearch />
