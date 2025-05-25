@@ -1,13 +1,13 @@
 'use client'
 
-import type { WithTagsNote } from '@/store/use-note-store'
+import type { NoteListItem } from '@/store/use-note-store'
 import { useNoteStore } from '@/store/use-note-store'
 import { motion } from 'motion/react'
 import { use, useEffect } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './note-table-column'
 
-export default function NoteListTable({ initialDataPromise }: { initialDataPromise: Promise<WithTagsNote[]> }) {
+export default function NoteListTable({ initialDataPromise }: { initialDataPromise: Promise<NoteListItem[]> }) {
   const { notes, setNotes, isFirstRender, markRendered } = useNoteStore()
 
   let initialData: Awaited<typeof initialDataPromise>

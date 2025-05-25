@@ -44,6 +44,9 @@ export async function createBlog(values: ArticleDTO) {
         connect: relatedTags.map(tag => ({ id: tag.id })),
       },
     },
+    include: {
+      tags: true,
+    },
   })
 }
 
@@ -153,10 +156,12 @@ export async function updateBlogById(values: UpdateArticleDTO) {
       updatedAt: new Date(),
       content: values.content,
     },
+    include: {
+      tags: true,
+    },
   })
 }
 
-// todo: 缓存
 export async function getQueryBlogs(blogTitle: string) {
   return await prisma.blog.findMany({
     where: {

@@ -44,6 +44,9 @@ export async function createNote(values: ArticleDTO) {
         connect: relatedTags.map(tag => ({ id: tag.id })),
       },
     },
+    include: {
+      tags: true,
+    },
   })
 }
 
@@ -151,6 +154,9 @@ export async function updateNoteById(values: UpdateArticleDTO) {
       isPublished: values.isPublished,
       updatedAt: new Date(),
       content: values.content,
+    },
+    include: {
+      tags: true,
     },
   })
 }

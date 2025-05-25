@@ -16,8 +16,10 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import { useBlogStore } from '@/store/use-blog-store'
 import { useBlogTagStore } from '@/store/use-blog-tag-store'
 import { useModalStore } from '@/store/use-modal-store'
+import { useNoteStore } from '@/store/use-note-store'
 import { useNoteTagStore } from '@/store/use-note-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TagType } from '@prisma/client'
@@ -50,6 +52,8 @@ export default function AdminArticleEditPage({
 
   const { blogTags } = useBlogTagStore()
   const { noteTags } = useNoteTagStore()
+  const { appendBlog, updateBlog } = useBlogStore()
+  const { appendNote, updateNote } = useNoteStore()
 
   const allTags = editPageType === 'BLOG' ? blogTags : noteTags
 
@@ -69,25 +73,32 @@ export default function AdminArticleEditPage({
     try {
       if (article?.id) {
         switch (editPageType) {
-          case TagType.BLOG:
-            await updateBlogById({ ...values, id: article.id })
+          case TagType.BLOG: {
+            const { createdAt, id, isPublished, slug, tags, title, updatedAt } = await updateBlogById({ ...values, id: article.id })
+            updateBlog({ createdAt, id, isPublished, slug, tags, title, updatedAt })
             break
-          case TagType.NOTE:
-            await updateNoteById({ ...values, id: article.id })
+          }
+          case TagType.NOTE: {
+            const { tags, createdAt, id, isPublished, slug, title, updatedAt } = await updateNoteById({ ...values, id: article.id })
+            updateNote({ createdAt, id, isPublished, slug, tags, title, updatedAt })
             break
+          }
           default:
             throw new Error(`文章类型错误`)
         }
       }
       else {
         switch (editPageType) {
-          case TagType.BLOG:
-            // todo: 刷新缓存 or 本地更新
-            await createBlog(values)
+          case TagType.BLOG: {
+            const { id, createdAt, isPublished, slug, title, updatedAt, tags } = await createBlog(values)
+            appendBlog({ id, createdAt, isPublished, slug, title, updatedAt, tags })
             break
-          case TagType.NOTE:
-            await createNote(values)
+          }
+          case TagType.NOTE: {
+            const { id, createdAt, isPublished, slug, title, updatedAt, tags } = await createNote(values)
+            appendNote({ createdAt, id, isPublished, slug, tags, title, updatedAt })
             break
+          }
           default:
             throw new Error(`文章类型错误`)
         }
