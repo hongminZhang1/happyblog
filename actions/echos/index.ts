@@ -9,6 +9,7 @@ export async function createEcho(values: CreateEchoDTO) {
   await requireAdmin()
 
   revalidatePath('/')
+  revalidatePath('/admin/echo')
 
   return await prisma.echo.create({
     data: {
@@ -23,6 +24,7 @@ export async function deleteEchoById(id: number) {
   await requireAdmin()
 
   revalidatePath('/')
+  revalidatePath('/admin/echo')
 
   return await prisma.echo.delete({
     where: {
@@ -35,6 +37,7 @@ export async function updateEchoById(values: UpdateEchoDTO) {
   await requireAdmin()
 
   revalidatePath('/')
+  revalidatePath('/admin/echo')
 
   return await prisma.echo.update({
     where: {
@@ -53,6 +56,7 @@ export async function toggleEchoPublishedById(id: number, newIsPublishedStatus: 
   await requireAdmin()
 
   revalidatePath('/')
+  revalidatePath('/admin/echo')
 
   return await prisma.echo.update({
     where: {
