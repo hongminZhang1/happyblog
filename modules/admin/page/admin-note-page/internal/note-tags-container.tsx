@@ -19,7 +19,7 @@ export function NoteTagsContainer({ noteTagsPromise }: { noteTagsPromise: Promis
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
 
-  const initialData = use(noteTagsPromise).map(tag => tag.tagName)
+  const noteTags = use(noteTagsPromise).map(tag => tag.tagName)
 
   useEffect(() => {
     if (!api) {
@@ -61,14 +61,14 @@ export function NoteTagsContainer({ noteTagsPromise }: { noteTagsPromise: Promis
       />
 
       <CarouselContent className="shrink-0 w-fit max-w-[calc(100vw-4rem)]">
-        {initialData.length === 0
+        {noteTags.length === 0
           ? (
               <CarouselItem className="text-muted-foreground m-auto">
                 没有标签 (｡•́︿•̀｡)
               </CarouselItem>
             )
           : (
-              initialData.map((tag, i) => (
+              noteTags.map((tag, i) => (
                 <CarouselItem className="basis-auto" key={tag.toLowerCase()}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

@@ -7,7 +7,7 @@ import { columns } from './blog-table-column'
 import { DataTable } from './data-table'
 
 export default function BlogListTable({ blogListPromise }: { blogListPromise: Promise<BlogListItem[]> }) {
-  const initialData = use(blogListPromise)
+  const blogList = use(blogListPromise)
 
   return (
     <motion.main
@@ -20,7 +20,7 @@ export default function BlogListTable({ blogListPromise }: { blogListPromise: Pr
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={initialData} />
+      <DataTable columns={columns} data={blogList} />
     </motion.main>
   )
 }

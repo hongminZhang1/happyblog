@@ -7,7 +7,7 @@ import { DataTable } from './data-table'
 import { columns } from './tag-table-column'
 
 export default function TagListTable({ allTagsPromise }: { allTagsPromise: Promise<Tag[]> }) {
-  const initialData = use(allTagsPromise)
+  const allTags = use(allTagsPromise)
 
   return (
     <motion.main
@@ -20,7 +20,7 @@ export default function TagListTable({ allTagsPromise }: { allTagsPromise: Promi
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={initialData} />
+      <DataTable columns={columns} data={allTags} />
     </motion.main>
   )
 }

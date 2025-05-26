@@ -7,7 +7,7 @@ import { DataTable } from './data-table'
 import { columns } from './note-table-column'
 
 export default function NoteListTable({ noteListPromise }: { noteListPromise: Promise<NoteListItem[]> }) {
-  const initialData = use(noteListPromise)
+  const noteList = use(noteListPromise)
 
   return (
     <motion.main
@@ -20,7 +20,7 @@ export default function NoteListTable({ noteListPromise }: { noteListPromise: Pr
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={initialData} />
+      <DataTable columns={columns} data={noteList} />
     </motion.main>
   )
 }
