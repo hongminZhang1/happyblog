@@ -37,7 +37,6 @@ export async function updateEchoById(values: UpdateEchoDTO) {
   await requireAdmin()
 
   revalidatePath('/')
-  revalidatePath('/admin/echo')
 
   return await prisma.echo.update({
     where: {
@@ -56,7 +55,6 @@ export async function toggleEchoPublishedById(id: number, newIsPublishedStatus: 
   await requireAdmin()
 
   revalidatePath('/')
-  revalidatePath('/admin/echo')
 
   return await prisma.echo.update({
     where: {
