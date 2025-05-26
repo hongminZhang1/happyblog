@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import { parseEditPageTypeFromUrl } from '@/lib/url'
 import { useModalStore } from '@/store/use-modal-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -27,14 +28,6 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import MarkdownEditor from './internal/markdown-editor'
 import { ArticleSchema } from './type'
-
-function parseEditPageTypeFromUrl(url: string): TagType {
-  const type = url.split('/')[2].toUpperCase()
-  if (type === TagType.BLOG || type === TagType.NOTE) {
-    return type
-  }
-  throw new Error(`解析编辑页面类型错误`)
-}
 
 export default function AdminArticleEditPage({
   article,

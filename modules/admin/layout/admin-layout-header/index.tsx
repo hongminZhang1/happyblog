@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 import AdminLogo from './internal/admin-logo'
 import AvatarDropdownMenu from './internal/avatar-dropdown-menu'
 
-export const AdminRoutes = [
+const AdminRoutes = [
   {
     path: '/admin',
     pathName: '首页',

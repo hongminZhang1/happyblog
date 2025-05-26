@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export const ExternalLinks = [
+const ExternalLinks = [
   {
     name: 'GitHub',
     url: 'https://github.com/NeilYeTAT',
