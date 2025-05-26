@@ -6,8 +6,8 @@ import { use } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './tag-table-column'
 
-export default function TagListTable({ initialDataPromise }: { initialDataPromise: Promise<Tag[]> }) {
-  const initialData = use(initialDataPromise)
+export default function TagListTable({ allTagsPromise }: { allTagsPromise: Promise<Tag[]> }) {
+  const initialData = use(allTagsPromise)
 
   return (
     <motion.main

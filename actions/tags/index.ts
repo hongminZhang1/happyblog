@@ -19,6 +19,7 @@ export async function createBlogTag(tagName: string) {
     throw new Error('标签名已存在')
   }
 
+  revalidatePath('/admin/tag')
   revalidatePath('/admin/blog')
 
   return await prisma.blogTag.create({
@@ -41,6 +42,7 @@ export async function createNoteTag(tagName: string) {
     throw new Error('标签名已存在')
   }
 
+  revalidatePath('/admin/tag')
   revalidatePath('/admin/note')
 
   return await prisma.noteTag.create({
@@ -59,6 +61,7 @@ export async function deleteBlogTagById(id: number) {
     throw new Error('标签不存在')
   }
 
+  revalidatePath('/admin/tag')
   revalidatePath('/admin/blog')
 
   return await prisma.blogTag.delete({
@@ -77,6 +80,7 @@ export async function deleteNoteTagById(id: number) {
     throw new Error('标签不存在')
   }
 
+  revalidatePath('/admin/tag')
   revalidatePath('/admin/note')
 
   return await prisma.noteTag.delete({
@@ -104,6 +108,7 @@ export async function updateBlogTagById(values: UpdateTagNameDTO) {
     throw new Error(`标签名 "${tagName}" 已存在`)
   }
 
+  revalidatePath('/admin/tag')
   revalidatePath('/admin/blog')
 
   return await prisma.blogTag.update({
@@ -134,6 +139,7 @@ export async function updateNoteTagById(values: UpdateTagNameDTO) {
     throw new Error(`标签名 "${tagName}" 已存在`)
   }
 
+  revalidatePath('/admin/tag')
   revalidatePath('/admin/note')
 
   return await prisma.noteTag.update({
