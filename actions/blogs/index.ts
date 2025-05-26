@@ -166,14 +166,20 @@ export async function updateBlogById(values: UpdateArticleDTO) {
   })
 }
 
-export async function getQueryBlogs(blogTitle: string) {
+export async function getQueryBlog(blogTitle: string) {
   return await prisma.blog.findMany({
     where: {
       title: {
         contains: blogTitle,
       },
     },
-    include: {
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      isPublished: true,
+      createdAt: true,
+      updatedAt: true,
       tags: true,
     },
   })
@@ -206,7 +212,13 @@ export async function getBlogsBySelectedTagName(tagNamesArray: string[]) {
         },
       ],
     },
-    include: {
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      isPublished: true,
+      createdAt: true,
+      updatedAt: true,
       tags: true,
     },
   })
@@ -224,6 +236,15 @@ export async function getAllShowBlogs() {
     },
     orderBy: {
       createdAt: 'desc',
+    },
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      isPublished: true,
+      createdAt: true,
+      updatedAt: true,
+      tags: true,
     },
   })
 }

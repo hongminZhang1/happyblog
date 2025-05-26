@@ -1,13 +1,20 @@
 'use client'
 
 import type { BlogListItem } from '@/store/use-blog-store'
+import { useBlogStore } from '@/store/use-blog-store'
 import { motion } from 'motion/react'
-import { use } from 'react'
+import { use, useEffect } from 'react'
 import { columns } from './blog-table-column'
 import { DataTable } from './data-table'
 
 export default function BlogListTable({ blogListPromise }: { blogListPromise: Promise<BlogListItem[]> }) {
   const blogList = use(blogListPromise)
+  const { blogs, setBlogs } = useBlogStore()
+
+  useEffect(() => {
+    setBlogs(blogList)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <motion.main
@@ -20,7 +27,7 @@ export default function BlogListTable({ blogListPromise }: { blogListPromise: Pr
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={blogList} />
+      <DataTable columns={columns} data={blogs} />
     </motion.main>
   )
 }

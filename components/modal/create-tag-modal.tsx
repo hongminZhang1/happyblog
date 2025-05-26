@@ -4,7 +4,6 @@ import type { CreateTagDTO } from '@/actions/tags/type'
 import {
   createBlogTag,
   createNoteTag,
-  getAllTags,
 } from '@/actions/tags'
 import { CreateTagSchema } from '@/actions/tags/type'
 import { Button } from '@/components/ui/button'
@@ -31,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { fetchAllTagsPromise } from '@/lib/api/tag'
 import { useModalStore } from '@/store/use-modal-store'
 import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -66,7 +66,7 @@ export default function CreateTagModal() {
           throw new Error('tag type 不匹配')
       }
 
-      const allTags = await getAllTags()
+      const allTags = await fetchAllTagsPromise()
       setTags(allTags)
       toast.success(`创建成功`)
     }

@@ -1,7 +1,8 @@
 'use client'
 
-import { getBlogList, getBlogsBySelectedTagName } from '@/actions/blogs'
+import { getBlogsBySelectedTagName } from '@/actions/blogs'
 import { Toggle } from '@/components/ui/toggle'
+import { fetchBlogListPromise } from '@/lib/api/blog'
 import { useBlogStore } from '@/store/use-blog-store'
 import { useSelectedTagStore } from '@/store/use-selected-tag-store'
 import { useEffect } from 'react'
@@ -30,7 +31,7 @@ export function BlogTagItemToggle({
     try {
       const blogs
         = updatedTags.length === 0
-          ? await getBlogList()
+          ? await fetchBlogListPromise()
           : await getBlogsBySelectedTagName(updatedTags)
       setBlogs(blogs)
     }

@@ -1,9 +1,10 @@
 'use client'
 
-import { getBlogList, getQueryBlogs } from '@/actions/blogs'
+import { getQueryBlog } from '@/actions/blogs'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useQueryLoader } from '@/hooks/use-query-loader'
+import { fetchBlogListPromise } from '@/lib/api/blog'
 import { cn } from '@/lib/utils'
 import { useBlogStore } from '@/store/use-blog-store'
 import { Plus, RotateCw, Search } from 'lucide-react'
@@ -12,8 +13,8 @@ import Link from 'next/link'
 export function BlogSearch() {
   const { setBlogs } = useBlogStore()
   const { query, fetchData, setQuery, resetData } = useQueryLoader(
-    getBlogList,
-    getQueryBlogs,
+    fetchBlogListPromise,
+    getQueryBlog,
     setBlogs,
   )
 

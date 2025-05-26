@@ -1,7 +1,7 @@
 'use client'
 
 import type { CreateEchoDTO } from '@/actions/echos/type'
-import { createEcho, getAllEchos } from '@/actions/echos'
+import { createEcho } from '@/actions/echos'
 import { CreateEchoSchema } from '@/actions/echos/type'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,6 +23,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { fetchAllEchosPromise } from '@/lib/api/echo'
 import { useEchoStore } from '@/store/use-echo-store'
 import { useModalStore } from '@/store/use-modal-store'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -48,7 +49,7 @@ export default function CreateEchoModal() {
   const handleCreateEcho = async (values: CreateEchoDTO) => {
     try {
       await createEcho(values)
-      const echos = await getAllEchos()
+      const echos = await fetchAllEchosPromise()
       setEchos(echos)
       toast.success(`创建成功~`)
     }

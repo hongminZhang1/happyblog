@@ -8,11 +8,11 @@ import { DataTable } from './data-table'
 import { columns } from './echo-table-column'
 
 export default function EchoListTable({ echoPromise }: { echoPromise: Promise<Echo[]> }) {
-  const echos = use(echoPromise)
-  const setEchos = useEchoStore(state => state.setEchos)
+  const echoList = use(echoPromise)
+  const { echos, setEchos } = useEchoStore()
 
   useEffect(() => {
-    setEchos(echos)
+    setEchos(echoList)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
