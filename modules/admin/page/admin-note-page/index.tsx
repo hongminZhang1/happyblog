@@ -1,21 +1,20 @@
-import { getNoteList } from '@/actions/notes'
-import { getNoteTags } from '@/actions/tags'
 import Loading from '@/components/shared/loading'
+import { fetchNoteListPromise, fetchNoteTagsPromise } from '@/lib/api/note'
 import { Suspense } from 'react'
 import NoteListTable from './internal/note-list-table'
 import { NoteSearch } from './internal/note-search'
 import { NoteTagsContainer } from './internal/note-tags-container'
 
 export default async function AdminNotePage() {
-  const allNotesPromise = getNoteList()
-  const initialDataPromise = getNoteTags()
+  const noteTagsPromise = fetchNoteTagsPromise()
+  const noteListPromise = fetchNoteListPromise()
 
   return (
     <main className="w-full flex flex-col gap-2">
       <NoteSearch />
       <Suspense fallback={<Loading />}>
-        <NoteTagsContainer initialDataPromise={initialDataPromise} />
-        <NoteListTable initialDataPromise={allNotesPromise} />
+        <NoteTagsContainer noteTagsPromise={noteTagsPromise} />
+        <NoteListTable noteListPromise={noteListPromise} />
       </Suspense>
     </main>
   )

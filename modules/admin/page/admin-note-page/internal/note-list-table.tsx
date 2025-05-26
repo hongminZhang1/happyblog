@@ -6,8 +6,8 @@ import { use } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './note-table-column'
 
-export default function NoteListTable({ initialDataPromise }: { initialDataPromise: Promise<NoteListItem[]> }) {
-  const initialData = use(initialDataPromise)
+export default function NoteListTable({ noteListPromise }: { noteListPromise: Promise<NoteListItem[]> }) {
+  const initialData = use(noteListPromise)
 
   return (
     <motion.main

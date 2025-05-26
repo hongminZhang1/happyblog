@@ -31,6 +31,7 @@ export async function createNote(values: ArticleDTO) {
   }
 
   revalidatePath('/note')
+  revalidatePath('/admin/note')
 
   return await prisma.note.create({
     data: {
@@ -54,6 +55,7 @@ export async function deleteNoteById(noteId: number) {
   await requireAdmin()
 
   revalidatePath('/note')
+  revalidatePath('/admin/note')
 
   return prisma.note.delete({
     where: {
@@ -66,6 +68,7 @@ export async function toggleNotePublishedById(id: number, newIsPublishedStatus: 
   await requireAdmin()
 
   revalidatePath('/note')
+  revalidatePath('/admin/note')
 
   return await prisma.note.update({
     where: {
@@ -143,6 +146,7 @@ export async function updateNoteById(values: UpdateArticleDTO) {
   })
 
   revalidatePath('/note')
+  revalidatePath('/admin/note')
 
   return await prisma.note.update({
     where: {
