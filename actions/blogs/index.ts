@@ -31,6 +31,7 @@ export async function createBlog(values: ArticleDTO) {
   }
 
   revalidatePath('/blog')
+  revalidatePath('/admin/blog')
 
   return await prisma.blog.create({
     data: {
@@ -54,6 +55,7 @@ export async function deleteBlogById(blogId: number) {
   await requireAdmin()
 
   revalidatePath('/blog')
+  revalidatePath('/admin/blog')
 
   return prisma.blog.delete({
     where: {
@@ -66,6 +68,7 @@ export async function toggleBlogPublishedById(id: number, newIsPublishedStatus: 
   await requireAdmin()
 
   revalidatePath('/blog')
+  revalidatePath('/admin/blog')
 
   return await prisma.blog.update({
     where: {
@@ -144,6 +147,7 @@ export async function updateBlogById(values: UpdateArticleDTO) {
   })
 
   revalidatePath('/blog')
+  revalidatePath('/admin/blog')
 
   return await prisma.blog.update({
     where: {
