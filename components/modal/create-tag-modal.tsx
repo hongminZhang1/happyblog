@@ -30,11 +30,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { fetchAllTagsPromise } from '@/lib/api/tag'
 import { useModalStore } from '@/store/use-modal-store'
-import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TagType } from '@prisma/client'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -42,7 +41,23 @@ import { toast } from 'sonner'
 export default function CreateTagModal() {
   const { modalType, onModalClose } = useModalStore()
   const isModalOpen = modalType === 'createTagModal'
-  const { setTags } = useTagStore()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: handleCreateTag,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tags'] })
+      toast.success(`创建成功`)
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(`创建标签失败~ ${error.message}`)
+      }
+      else {
+        toast.error(`创建标签失败~`)
+      }
+    },
+  })
 
   const form = useForm<CreateTagDTO>({
     resolver: zodResolver(CreateTagSchema),
@@ -53,41 +68,27 @@ export default function CreateTagModal() {
     mode: 'onBlur',
   })
 
-  const handleCreateTag = async (values: CreateTagDTO) => {
-    try {
-      switch (values.tagType) {
-        case TagType.BLOG:
-          await createBlogTag(values.tagName)
-          break
-        case TagType.NOTE:
-          await createNoteTag(values.tagName)
-          break
-        default:
-          throw new Error('tag type 不匹配')
-      }
-
-      const allTags = await fetchAllTagsPromise()
-      setTags(allTags)
-      toast.success(`创建成功`)
-    }
-    catch (error) {
-      if (error instanceof Error) {
-        toast.error(`创建标签失败~ ${error.message}`)
-      }
-      else {
-        toast.error(`创建标签失败~`)
-      }
-    }
-  }
-
   useEffect(() => {
     if (!isModalOpen) {
       form.reset()
     }
   }, [isModalOpen, form])
 
+  async function handleCreateTag(values: CreateTagDTO) {
+    switch (values.tagType) {
+      case TagType.BLOG:
+        await createBlogTag(values.tagName)
+        break
+      case TagType.NOTE:
+        await createNoteTag(values.tagName)
+        break
+      default:
+        throw new Error('tag type 不匹配')
+    }
+  }
+
   function onSubmit(values: CreateTagDTO) {
-    handleCreateTag(values)
+    mutation.mutate(values)
     onModalClose()
   }
 
