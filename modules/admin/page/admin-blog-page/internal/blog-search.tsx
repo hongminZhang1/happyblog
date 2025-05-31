@@ -1,42 +1,44 @@
 'use client'
 
-import { getQueryBlog } from '@/actions/blogs'
+import type { Dispatch, SetStateAction } from 'react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useQueryLoader } from '@/hooks/use-query-loader'
-import { fetchBlogListPromise } from '@/lib/api/blog'
 import { cn } from '@/lib/utils'
-import { useBlogStore } from '@/store/use-blog-store'
 import { Plus, RotateCw, Search } from 'lucide-react'
 import Link from 'next/link'
+import { useRef } from 'react'
 
-export function BlogSearch() {
-  const { setBlogs } = useBlogStore()
-  const { query, fetchData, setQuery, resetData } = useQueryLoader(
-    fetchBlogListPromise,
-    getQueryBlog,
-    setBlogs,
-  )
+export function BlogSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<string>> }) {
+  const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <section className="flex gap-2">
       <Input
         placeholder="请输入标题喵~"
         className="w-1/2 xl:w-1/3"
-        value={query}
-        onChange={(e) => {
-          const value = e.target.value
-          if (value === ' ')
-            return
-          setQuery(value)
+        ref={inputRef}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            const query = inputRef.current?.value
+            if (query?.trim()) {
+              setQuery(query)
+            }
+            else {
+              setQuery('')
+            }
+          }
         }}
-        onKeyDown={e => e.key === 'Enter' && fetchData()}
       />
 
       <Button
         type="button"
         variant="secondary"
-        onClick={fetchData}
+        onClick={() => {
+          const query = inputRef.current?.value
+          if (query?.trim()) {
+            setQuery(query)
+          }
+        }}
         className="cursor-pointer"
       >
         <Search />
@@ -45,8 +47,10 @@ export function BlogSearch() {
 
       <Button
         variant="secondary"
-        onClick={resetData}
         className="cursor-pointer"
+        onClick={() => {
+          setQuery('')
+        }}
       >
         <RotateCw />
         重置

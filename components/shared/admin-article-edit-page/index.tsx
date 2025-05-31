@@ -47,6 +47,18 @@ export default function AdminArticleEditPage({
     mutationFn: (values: ArticleDTO) => updateArticle(values, editPageType, article?.id),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['tags'] })
+
+      switch (editPageType) {
+        case TagType.BLOG:
+          queryClient.invalidateQueries({ queryKey: ['blog-list'] })
+          break
+        case TagType.NOTE:
+          queryClient.invalidateQueries({ queryKey: ['note-list'] })
+          break
+        default:
+          throw new Error(`文章类型错误`)
+      }
+
       toast.success('保存成功')
       router.push(`/admin/${editPageType.toLowerCase()}/edit/${variables.slug}`)
     },
