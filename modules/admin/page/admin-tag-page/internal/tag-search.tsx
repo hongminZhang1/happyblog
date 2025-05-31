@@ -1,40 +1,44 @@
 'use client'
 
-import { getAllTags, getQueryTags } from '@/actions/tags'
+import type { Dispatch, SetStateAction } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useQueryLoader } from '@/hooks/use-query-loader'
 import { useModalStore } from '@/store/use-modal-store'
-import { useTagStore } from '@/store/use-tag-store'
 import { Plus, RotateCw, Search } from 'lucide-react'
+import { useRef } from 'react'
 
-export default function TagSearch() {
+export default function TagSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<string>> }) {
   const { setModalOpen } = useModalStore()
-  const { setTags } = useTagStore()
-  const { query, setQuery, fetchData, resetData } = useQueryLoader(
-    getAllTags,
-    getQueryTags,
-    setTags,
-  )
+  const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <div className="flex gap-2">
       <Input
         className="w-1/2 xl:w-1/3"
         placeholder="请输入标签名喵~"
-        value={query}
-        onChange={(e) => {
-          if (e.target.value === ' ')
-            return
-          setQuery(e.target.value)
+        ref={inputRef}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            const query = inputRef.current?.value
+            if (query?.trim()) {
+              setQuery(query)
+            }
+            else {
+              setQuery('')
+            }
+          }
         }}
-        onKeyDown={e => e.key === 'Enter' && fetchData()}
       />
       <Button
         type="button"
         variant="secondary"
-        onClick={fetchData}
         className="cursor-pointer"
+        onClick={() => {
+          const query = inputRef.current?.value
+          if (query?.trim()) {
+            setQuery(query)
+          }
+        }}
       >
         <Search />
         搜索
@@ -42,8 +46,10 @@ export default function TagSearch() {
 
       <Button
         variant="secondary"
-        onClick={resetData}
         className="cursor-pointer"
+        onClick={() => {
+          setQuery('')
+        }}
       >
         <RotateCw />
         重置

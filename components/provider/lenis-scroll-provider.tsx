@@ -1,5 +1,5 @@
-// lenis-provider.tsx
 'use client'
+
 import type { FC } from 'react'
 import { ReactLenis } from 'lenis/react'
 
