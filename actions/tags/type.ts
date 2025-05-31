@@ -13,6 +13,7 @@ export const UpdateTagNameSchema = z.object({
 
 export type CreateTagDTO = z.infer<typeof CreateTagSchema>
 export type UpdateTagNameDTO = z.infer<typeof UpdateTagNameSchema>
+export type DeleteTagDTO = UpdateTagNameDTO
 export type WithCountTagDTO = z.infer<typeof UpdateTagNameSchema> & {
   count: number
 }

@@ -1,3 +1,5 @@
+import type { DeleteTagDTO } from '@/actions/tags/type'
+import { deleteBlogTagById, deleteNoteTagById } from '@/actions/tags'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -7,10 +9,42 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useModalStore } from '@/store/use-modal-store'
+import { TagType } from '@prisma/client'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 export default function DeleteTagModal() {
   const { modalType, payload, onModalClose } = useModalStore()
   const isModalOpen = modalType === 'deleteTagModal'
+  const values = payload
+    ? (payload as DeleteTagDTO)
+    : null
+
+  const queryClient = useQueryClient()
+  const { mutate, isPending } = useMutation({
+    mutationFn: handleDeleteTag,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['tags'] })
+      toast.success(`删除标签 #${variables?.tagName} 成功`)
+    },
+    onError: (error, variables) => {
+      if (error instanceof Error) {
+        toast.error(`删除标签 ${variables?.tagName} 失败~ ${error.message}`)
+      }
+      else {
+        toast.error(`删除标签 ${variables?.tagName} 出错~`)
+      }
+    },
+  })
+
+  async function onSubmit() {
+    if (!values) {
+      toast.error(`标签信息不存在，删除出错`)
+      return
+    }
+    mutate(values)
+    onModalClose()
+  }
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onModalClose}>
@@ -23,12 +57,11 @@ export default function DeleteTagModal() {
         </DialogHeader>
         <div className="flex gap-4">
           <Button
+            onClick={onSubmit}
             variant="destructive"
             className="cursor-pointer"
+            disabled={isPending}
             type="submit"
-            onClick={() => {
-              typeof payload === 'function' && payload()
-            }}
           >
             确定
           </Button>
@@ -39,4 +72,17 @@ export default function DeleteTagModal() {
       </DialogContent>
     </Dialog>
   )
+}
+
+async function handleDeleteTag({ tagType, id }: DeleteTagDTO) {
+  switch (tagType) {
+    case TagType.BLOG:
+      await deleteBlogTagById(id)
+      break
+    case TagType.NOTE:
+      await deleteNoteTagById(id)
+      break
+    default:
+      throw new Error('标签类型错误或 id 不存在!')
+  }
 }
