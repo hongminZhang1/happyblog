@@ -1,10 +1,9 @@
-import { deleteBlogById } from '@/actions/blogs'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useModalStore } from '@/store/use-modal-store'
+import { TagType } from '@prisma/client'
 import { Edit2, Eye, Trash } from 'lucide-react'
 import Link from 'next/link'
-import { toast } from 'sonner'
 
 export default function ActionButtons({
   blogId,
@@ -16,21 +15,6 @@ export default function ActionButtons({
   title: string
 }) {
   const { setModalOpen } = useModalStore()
-
-  const handleDelete = async () => {
-    try {
-      await deleteBlogById(blogId)
-      toast.success(`删除成功`)
-    }
-    catch (error) {
-      if (error instanceof Error) {
-        toast.error(`删除 「${title}」 出错~ ${error?.message}`)
-      }
-      else {
-        toast.error(`删除 「${title}」 出错~`)
-      }
-    }
-  }
 
   return (
     <section className="flex items-center gap-1">
@@ -55,7 +39,11 @@ export default function ActionButtons({
       <Button
         variant="outline"
         className="size-8 text-red-600"
-        onClick={() => setModalOpen('deleteArticleModal', handleDelete)}
+        onClick={() => setModalOpen('deleteArticleModal', {
+          id: blogId,
+          title,
+          articleType: TagType.BLOG,
+        })}
       >
         <Trash className="size-4" />
       </Button>
