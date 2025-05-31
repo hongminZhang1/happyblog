@@ -4,7 +4,6 @@ import type { Blog, BlogTag, Note, NoteTag } from '@prisma/client'
 import type { ArticleDTO } from './type'
 import { createBlog, updateBlogById } from '@/actions/blogs'
 import { createNote, updateNoteById } from '@/actions/notes'
-import { getAllTags } from '@/actions/tags'
 import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/ui/combobox'
 import {
@@ -19,10 +18,10 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { parseEditPageTypeFromUrl } from '@/lib/url'
 import { useModalStore } from '@/store/use-modal-store'
-import { useTagStore } from '@/store/use-tag-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TagType } from '@prisma/client'
-import { File } from 'lucide-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { File, Loader2 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -43,7 +42,23 @@ export default function AdminArticleEditPage({
   const pathname = usePathname()
   const editPageType = parseEditPageTypeFromUrl(pathname)
 
-  const { setTags } = useTagStore()
+  const queryClient = useQueryClient()
+  const { mutate, isPending } = useMutation({
+    mutationFn: (values: ArticleDTO) => updateArticle(values, editPageType, article?.id),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['tags'] })
+      toast.success('保存成功')
+      router.push(`/admin/${editPageType.toLowerCase()}/edit/${variables.slug}`)
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(`保存失败 ${error.message}`)
+      }
+      else {
+        toast.error(`保存失败`)
+      }
+    },
+  })
 
   const form = useForm<ArticleDTO>({
     resolver: zodResolver(ArticleSchema),
@@ -58,45 +73,7 @@ export default function AdminArticleEditPage({
   })
 
   async function onSubmit(values: ArticleDTO) {
-    try {
-      if (article?.id) {
-        switch (editPageType) {
-          case TagType.BLOG:
-            await updateBlogById({ ...values, id: article.id })
-            break
-          case TagType.NOTE:
-            await updateNoteById({ ...values, id: article.id })
-            break
-          default:
-            throw new Error(`文章类型错误`)
-        }
-      }
-      else {
-        switch (editPageType) {
-          case TagType.BLOG:
-            await createBlog(values)
-            break
-          case TagType.NOTE:
-            await createNote(values)
-            break
-          default:
-            throw new Error(`文章类型错误`)
-        }
-      }
-      const allTags = await getAllTags()
-      setTags(allTags)
-
-      toast.success('保存成功')
-      router.push(`/admin/${editPageType.toLowerCase()}/edit/${values.slug}`)
-    }
-    catch (error) {
-      if (error instanceof Error) {
-        toast.error(`保存失败 ${error.message}`)
-      }
-      else {
-        toast.error(`保存失败`)
-      }
-    }
+    mutate(values)
   }
 
   return (
@@ -207,11 +184,49 @@ export default function AdminArticleEditPage({
           )}
         />
 
-        <Button type="submit" className="w-full">
-          <File />
-          保存
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending
+            ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  保存中...
+                </>
+              )
+            : (
+                <>
+                  <File className="mr-2 h-4 w-4" />
+                  保存
+                </>
+              )}
         </Button>
       </form>
     </Form>
   )
+}
+
+async function updateArticle(values: ArticleDTO, editPageType: TagType, id: number | undefined) {
+  if (id) {
+    switch (editPageType) {
+      case TagType.BLOG:
+        await updateBlogById({ ...values, id })
+        break
+      case TagType.NOTE:
+        await updateNoteById({ ...values, id })
+        break
+      default:
+        throw new Error(`文章类型错误`)
+    }
+  }
+  else {
+    switch (editPageType) {
+      case TagType.BLOG:
+        await createBlog(values)
+        break
+      case TagType.NOTE:
+        await createNote(values)
+        break
+      default:
+        throw new Error(`文章类型错误`)
+    }
+  }
 }
