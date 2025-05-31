@@ -1,12 +1,9 @@
-import { deleteNoteById } from '@/actions/notes'
-import { getAllTags } from '@/actions/tags'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useModalStore } from '@/store/use-modal-store'
-import { useTagStore } from '@/store/use-tag-store'
+import { TagType } from '@prisma/client'
 import { Edit2, Eye, Trash } from 'lucide-react'
 import Link from 'next/link'
-import { toast } from 'sonner'
 
 export default function ActionButtons({
   noteId,
@@ -18,23 +15,6 @@ export default function ActionButtons({
   title: string
 }) {
   const { setModalOpen } = useModalStore()
-  const { setTags } = useTagStore()
-
-  const handleDelete = async () => {
-    try {
-      const [, allTags] = await Promise.all([deleteNoteById(noteId), getAllTags()])
-      setTags(allTags)
-      toast.success(`删除成功`)
-    }
-    catch (error) {
-      if (error instanceof Error) {
-        toast.error(`删除 「${title}」 出错~ ${error?.message}`)
-      }
-      else {
-        toast.error(`删除 「${title}」 出错~`)
-      }
-    }
-  }
 
   return (
     <section className="flex items-center gap-1">
@@ -60,7 +40,11 @@ export default function ActionButtons({
         variant="outline"
         className="size-8 text-red-600 cursor-pointer"
         onClick={() => {
-          setModalOpen('deleteArticleModal', handleDelete)
+          setModalOpen('deleteArticleModal', {
+            id: noteId,
+            title,
+            articleType: TagType.NOTE,
+          })
         }}
       >
         <Trash />
