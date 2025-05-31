@@ -1,6 +1,6 @@
 'use client'
 
-import type { BlogTagItem } from '@/app/api/(cache)/blog/getBlogTags/route'
+import type { getBlogTags } from '@/actions/tags'
 import type {
   CarouselApi,
 } from '@/components/ui/carousel'
@@ -12,14 +12,16 @@ import {
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export function BlogTagsContainer({ blogTagsPromise }: { blogTagsPromise: Promise<BlogTagItem[]> }) {
+export type BlogTagItem = Awaited<ReturnType<typeof getBlogTags>>[number]
+
+export function BlogTagsContainer({ blogTags }: { blogTags: BlogTagItem[] }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
 
-  const blogTags = use(blogTagsPromise).map(tag => tag.tagName)
+  const blogTagList = blogTags.map(tag => tag.tagName)
 
   useEffect(() => {
     if (!api)
@@ -65,7 +67,7 @@ export function BlogTagsContainer({ blogTagsPromise }: { blogTagsPromise: Promis
               </CarouselItem>
             )
           : (
-              blogTags.map((tag, i) => (
+              blogTagList.map((tag, i) => (
                 <CarouselItem className="basis-auto" key={tag.toLowerCase()}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

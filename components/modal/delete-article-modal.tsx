@@ -30,6 +30,16 @@ export default function DeleteArticleModal() {
     onSuccess: (_, variables) => {
       toast.success(`删除文章「${variables.title}」成功`)
       queryClient.invalidateQueries({ queryKey: ['tags'] })
+      switch (variables.articleType) {
+        case TagType.BLOG:
+          queryClient.invalidateQueries({ queryKey: ['blog-list'] })
+          break
+        case TagType.NOTE:
+          queryClient.invalidateQueries({ queryKey: ['note-list'] })
+          break
+        default:
+          throw new Error(`删除文章类型不匹配`)
+      }
     },
     onError: (error, variables) => {
       if (error instanceof Error) {
