@@ -74,19 +74,6 @@ export default function CreateTagModal() {
     }
   }, [isModalOpen, form])
 
-  async function handleCreateTag(values: CreateTagDTO) {
-    switch (values.tagType) {
-      case TagType.BLOG:
-        await createBlogTag(values.tagName)
-        break
-      case TagType.NOTE:
-        await createNoteTag(values.tagName)
-        break
-      default:
-        throw new Error('tag type 不匹配')
-    }
-  }
-
   function onSubmit(values: CreateTagDTO) {
     mutation.mutate(values)
     onModalClose()
@@ -150,4 +137,17 @@ export default function CreateTagModal() {
       </DialogContent>
     </Dialog>
   )
+}
+
+async function handleCreateTag(values: CreateTagDTO) {
+  switch (values.tagType) {
+    case TagType.BLOG:
+      await createBlogTag(values.tagName)
+      break
+    case TagType.NOTE:
+      await createNoteTag(values.tagName)
+      break
+    default:
+      throw new Error('tag type 不匹配')
+  }
 }
