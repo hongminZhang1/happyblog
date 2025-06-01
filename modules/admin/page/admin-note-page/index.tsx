@@ -1,21 +1,41 @@
+'use client'
+
+import { getNoteList, getQueryNotes } from '@/actions/notes'
+import { getNoteTags } from '@/actions/tags'
 import Loading from '@/components/shared/loading'
-import { fetchNoteListPromise, fetchNoteTagsPromise } from '@/lib/api/note'
-import { Suspense } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import NoteListTable from './internal/note-list-table'
 import { NoteSearch } from './internal/note-search'
 import { NoteTagsContainer } from './internal/note-tags-container'
 
-export default async function AdminNotePage() {
-  const noteTagsPromise = fetchNoteTagsPromise()
-  const noteListPromise = fetchNoteListPromise()
+export default function AdminNotePage() {
+  const [query, setQuery] = useState('')
+
+  const { data: noteList, isPending: noteListPending } = useQuery({
+    queryKey: ['note-list', query],
+    queryFn: () => query.trim() ? getQueryNotes(query) : getNoteList(),
+    staleTime: 1000 * 30,
+  })
+
+  const { data: noteTags, isPending: noteTagsPending } = useQuery({
+    queryKey: ['note-tags'],
+    queryFn: getNoteTags,
+  })
 
   return (
     <main className="w-full flex flex-col gap-2">
-      <NoteSearch />
-      <Suspense fallback={<Loading />}>
-        <NoteTagsContainer noteTagsPromise={noteTagsPromise} />
-        <NoteListTable noteListPromise={noteListPromise} />
-      </Suspense>
+      <NoteSearch setQuery={setQuery} />
+      {
+        (noteListPending || noteTagsPending)
+          ? <Loading />
+          : (
+              <>
+                <NoteTagsContainer noteTagList={noteTags ?? []} />
+                <NoteListTable noteList={noteList ?? []} />
+              </>
+            )
+      }
     </main>
   )
 }

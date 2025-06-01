@@ -12,14 +12,14 @@ import {
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export function NoteTagsContainer({ noteTagsPromise }: { noteTagsPromise: Promise<NoteTagItem[]> }) {
+export function NoteTagsContainer({ noteTagList }: { noteTagList: NoteTagItem[] }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
 
-  const noteTags = use(noteTagsPromise).map(tag => tag.tagName)
+  const noteTags = noteTagList.map(tag => tag.tagName)
 
   useEffect(() => {
     if (!api) {

@@ -1,41 +1,44 @@
 'use client'
 
-import { getNoteList, getQueryNotes } from '@/actions/notes'
+import type { Dispatch, SetStateAction } from 'react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useQueryLoader } from '@/hooks/use-query-loader'
 import { cn } from '@/lib/utils'
-import { useNoteStore } from '@/store/use-note-store'
 import { Plus, RotateCw, Search } from 'lucide-react'
 import Link from 'next/link'
+import { useRef } from 'react'
 
-export function NoteSearch() {
-  const { setNotes } = useNoteStore()
-  const { query, setQuery, fetchData, resetData } = useQueryLoader(
-    getNoteList,
-    getQueryNotes,
-    setNotes,
-  )
+export function NoteSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<string>> }) {
+  const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <section className="flex gap-2">
       <Input
         placeholder="请输入标题喵~"
         className="w-1/2 xl:w-1/3"
-        value={query}
-        onChange={(e) => {
-          const value = e.target.value
-          if (value === ' ')
-            return
-          setQuery(e.target.value)
+        ref={inputRef}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            const query = inputRef.current?.value
+            if (query?.trim()) {
+              setQuery(query)
+            }
+            else {
+              setQuery('')
+            }
+          }
         }}
-        onKeyDown={e => e.key === 'Enter' && fetchData()}
       />
 
       <Button
         type="button"
         variant="secondary"
-        onClick={fetchData}
+        onClick={() => {
+          const query = inputRef.current?.value
+          if (query?.trim()) {
+            setQuery(query)
+          }
+        }}
         className="cursor-pointer"
       >
         <Search />
@@ -44,7 +47,9 @@ export function NoteSearch() {
 
       <Button
         variant="secondary"
-        onClick={resetData}
+        onClick={() => {
+          setQuery('')
+        }}
         className="cursor-pointer"
       >
         <RotateCw />
