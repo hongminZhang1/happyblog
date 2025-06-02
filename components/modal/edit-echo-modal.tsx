@@ -1,7 +1,7 @@
 'use client'
 
 import type { UpdateEchoDTO } from '@/actions/echos/type'
-import { getAllEchos, updateEchoById } from '@/actions/echos'
+import { updateEchoById } from '@/actions/echos'
 import { UpdateEchoSchema } from '@/actions/echos/type'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,9 +21,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
-import { useEchoStore } from '@/store/use-echo-store'
 import { useModalStore } from '@/store/use-modal-store'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -31,7 +31,6 @@ import { toast } from 'sonner'
 export default function EditEchoModal() {
   const { modalType, onModalClose, payload } = useModalStore()
   const isModalOpen = modalType === 'editEchoModal'
-  const { setEchos } = useEchoStore()
 
   const { id, content, isPublished, reference } = payload
     ? (payload as UpdateEchoDTO)
@@ -41,7 +40,7 @@ export default function EditEchoModal() {
     content: content ?? '',
     reference: reference ?? '',
     isPublished: isPublished ?? true,
-    id: id ?? -1,
+    id: id!,
   }
 
   const form = useForm<UpdateEchoDTO>({
@@ -50,7 +49,7 @@ export default function EditEchoModal() {
       content: '',
       reference: '',
       isPublished: true,
-      id: id ?? -1,
+      id: id!,
     },
     mode: 'onBlur',
   })
@@ -62,30 +61,25 @@ export default function EditEchoModal() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen, form])
 
-  const handleEditEcho = async (values: UpdateEchoDTO) => {
-    if (!id || id === -1) {
-      toast.error(`引用 id 不存在`)
-      return
-    }
-
-    try {
-      await updateEchoById({ ...values, id })
-      const echos = await getAllEchos()
-      setEchos(echos)
-      toast.success(`更新成功`)
-    }
-    catch (error) {
+  const queryClient = useQueryClient()
+  const { mutate, isPending } = useMutation({
+    mutationFn: handleEditEcho,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['echo-list'] })
+      toast.success(`修改成功`)
+    },
+    onError: (error) => {
       if (error instanceof Error) {
         toast.error(`更新引用失败~ ${error.message}`)
       }
       else {
         toast.error('更新引用失败~')
       }
-    }
-  }
+    },
+  })
 
   async function onSubmit(values: UpdateEchoDTO) {
-    handleEditEcho(values)
+    mutate(values)
     onModalClose()
   }
 
@@ -154,11 +148,15 @@ export default function EditEchoModal() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="cursor-pointer">保存修改</Button>
+              <Button type="submit" className="cursor-pointer" disabled={isPending}>保存修改</Button>
             </form>
           </Form>
         </div>
       </DialogContent>
     </Dialog>
   )
+}
+
+async function handleEditEcho(values: UpdateEchoDTO) {
+  await updateEchoById({ ...values })
 }
