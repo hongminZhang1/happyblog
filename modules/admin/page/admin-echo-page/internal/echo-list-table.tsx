@@ -1,21 +1,11 @@
 'use client'
 
 import type { Echo } from '@prisma/client'
-import { useEchoStore } from '@/store/use-echo-store'
 import { motion } from 'motion/react'
-import { use, useEffect } from 'react'
 import { DataTable } from './data-table'
 import { columns } from './echo-table-column'
 
-export default function EchoListTable({ echoPromise }: { echoPromise: Promise<Echo[]> }) {
-  const echoList = use(echoPromise)
-  const { echos, setEchos } = useEchoStore()
-
-  useEffect(() => {
-    setEchos(echoList)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
+export default function EchoListTable({ echoList }: { echoList: Echo[] }) {
   return (
     <motion.main
       className="flex-1"
@@ -27,7 +17,7 @@ export default function EchoListTable({ echoPromise }: { echoPromise: Promise<Ec
         damping: 20,
       }}
     >
-      <DataTable columns={columns} data={echos} />
+      <DataTable columns={columns} data={echoList} />
     </motion.main>
   )
 }

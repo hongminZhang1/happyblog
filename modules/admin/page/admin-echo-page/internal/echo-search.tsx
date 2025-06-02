@@ -1,41 +1,44 @@
 'use client'
 
-import { getAllEchos, getQueryEchos } from '@/actions/echos'
+import type { Dispatch, SetStateAction } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useQueryLoader } from '@/hooks/use-query-loader'
-import { useEchoStore } from '@/store/use-echo-store'
 import { useModalStore } from '@/store/use-modal-store'
 import { Plus, RotateCw, Search } from 'lucide-react'
+import { useRef } from 'react'
 
-export default function EchoSearch() {
-  const { setEchos } = useEchoStore()
-  const { query, setQuery, fetchData, resetData } = useQueryLoader(
-    getAllEchos,
-    getQueryEchos,
-    setEchos,
-  )
+export default function EchoSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<string>> }) {
   const { setModalOpen } = useModalStore()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <section className="flex gap-2">
       <Input
         placeholder="请输入引用喵~"
         className="w-1/2 xl:w-1/3"
-        value={query}
-        onChange={(e) => {
-          const value = e.target.value
-          if (value === ' ')
-            return
-          setQuery(value)
+        ref={inputRef}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            const query = inputRef.current?.value
+            if (query?.trim()) {
+              setQuery(query)
+            }
+            else {
+              setQuery('')
+            }
+          }
         }}
-        onKeyDown={e => e.key === 'Enter' && fetchData()}
       />
 
       <Button
         type="button"
         variant="secondary"
-        onClick={fetchData}
+        onClick={() => {
+          const query = inputRef.current?.value
+          if (query?.trim()) {
+            setQuery(query)
+          }
+        }}
         className="cursor-pointer"
       >
         <Search />
@@ -44,7 +47,9 @@ export default function EchoSearch() {
 
       <Button
         variant="secondary"
-        onClick={resetData}
+        onClick={() => {
+          setQuery('')
+        }}
         className="cursor-pointer"
       >
         <RotateCw />
