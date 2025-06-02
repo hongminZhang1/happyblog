@@ -81,7 +81,7 @@ export function NoteTagsContainer({ noteTagList, setSelectedTags }: { noteTagLis
                       delay: i * 0.15,
                     } }}
                   >
-                    <NoteTagItemToggle tag={tag}setSelectedTags={setSelectedTags} />
+                    <NoteTagItemToggle tag={tag} setSelectedTags={setSelectedTags} />
                   </motion.div>
                 </CarouselItem>
               ))

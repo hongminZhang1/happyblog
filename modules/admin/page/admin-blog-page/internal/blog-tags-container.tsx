@@ -4,6 +4,7 @@ import type { getBlogTags } from '@/actions/tags'
 import type {
   CarouselApi,
 } from '@/components/ui/carousel'
+import type { Dispatch, SetStateAction } from 'react'
 import { BlogTagItemToggle } from '@/components/shared/tag-item-toggle'
 import {
   Carousel,
@@ -16,12 +17,12 @@ import { useEffect, useState } from 'react'
 
 export type BlogTagItem = Awaited<ReturnType<typeof getBlogTags>>[number]
 
-export function BlogTagsContainer({ blogTags }: { blogTags: BlogTagItem[] }) {
+export function BlogTagsContainer({ blogTagList, setSelectedTags }: { blogTagList: BlogTagItem[], setSelectedTags: Dispatch<SetStateAction<string[]>> }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
 
-  const blogTagList = blogTags.map(tag => tag.tagName)
+  const blogTags = blogTagList.map(tag => tag.tagName)
 
   useEffect(() => {
     if (!api)
@@ -67,7 +68,7 @@ export function BlogTagsContainer({ blogTags }: { blogTags: BlogTagItem[] }) {
               </CarouselItem>
             )
           : (
-              blogTagList.map((tag, i) => (
+              blogTags.map((tag, i) => (
                 <CarouselItem className="basis-auto" key={tag.toLowerCase()}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -79,7 +80,7 @@ export function BlogTagsContainer({ blogTags }: { blogTags: BlogTagItem[] }) {
                       delay: i * 0.15,
                     } }}
                   >
-                    <BlogTagItemToggle tag={tag} />
+                    <BlogTagItemToggle tag={tag} setSelectedTags={setSelectedTags} />
                   </motion.div>
                 </CarouselItem>
               ))
