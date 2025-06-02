@@ -1,6 +1,6 @@
 'use client'
 
-import type { BlogListItem } from '@/store/use-blog-store'
+import type { BlogListItem } from '../type'
 import { motion } from 'motion/react'
 import { columns } from './blog-table-column'
 import { DataTable } from './data-table'

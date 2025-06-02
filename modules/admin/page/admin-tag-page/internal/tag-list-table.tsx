@@ -1,6 +1,6 @@
 'use client'
 
-import type { Tag } from '@/store/use-tag-store'
+import type { Tag } from '../type'
 import Loading from '@/components/shared/loading'
 import { motion } from 'motion/react'
 import { DataTable } from './data-table'
