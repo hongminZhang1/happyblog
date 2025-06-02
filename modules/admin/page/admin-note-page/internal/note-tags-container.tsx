@@ -4,6 +4,7 @@ import type { NoteTagItem } from '@/app/api/(cache)/note/getNoteTags/route'
 import type {
   CarouselApi,
 } from '@/components/ui/carousel'
+import type { Dispatch, SetStateAction } from 'react'
 import { NoteTagItemToggle } from '@/components/shared/tag-item-toggle'
 import {
   Carousel,
@@ -14,7 +15,7 @@ import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 
-export function NoteTagsContainer({ noteTagList }: { noteTagList: NoteTagItem[] }) {
+export function NoteTagsContainer({ noteTagList, setSelectedTags }: { noteTagList: NoteTagItem[], setSelectedTags: Dispatch<SetStateAction<string[]>> }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
@@ -80,7 +81,7 @@ export function NoteTagsContainer({ noteTagList }: { noteTagList: NoteTagItem[] 
                       delay: i * 0.15,
                     } }}
                   >
-                    <NoteTagItemToggle tag={tag} />
+                    <NoteTagItemToggle tag={tag}setSelectedTags={setSelectedTags} />
                   </motion.div>
                 </CarouselItem>
               ))

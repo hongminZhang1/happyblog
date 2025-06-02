@@ -1,6 +1,6 @@
 'use client'
 
-import { getNoteList, getQueryNotes } from '@/actions/notes'
+import { getNoteList, getNotesBySelectedTagName, getQueryNotes } from '@/actions/notes'
 import { getNoteTags } from '@/actions/tags'
 import Loading from '@/components/shared/loading'
 import { useQuery } from '@tanstack/react-query'
@@ -11,10 +11,17 @@ import { NoteTagsContainer } from './internal/note-tags-container'
 
 export default function AdminNotePage() {
   const [query, setQuery] = useState('')
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
 
   const { data: noteList, isPending: noteListPending } = useQuery({
-    queryKey: ['note-list', query],
-    queryFn: () => query.trim() ? getQueryNotes(query) : getNoteList(),
+    queryKey: ['note-list', query, selectedTags],
+    queryFn: () => {
+      if (query.trim())
+        return getQueryNotes(query)
+      if (selectedTags.length > 0)
+        return getNotesBySelectedTagName(selectedTags)
+      return getNoteList()
+    },
     staleTime: 1000 * 30,
   })
 
@@ -26,15 +33,15 @@ export default function AdminNotePage() {
   return (
     <main className="w-full flex flex-col gap-2">
       <NoteSearch setQuery={setQuery} />
+
+      {
+        !noteTagsPending && <NoteTagsContainer noteTagList={noteTags ?? []} setSelectedTags={setSelectedTags} />
+      }
+
       {
         (noteListPending || noteTagsPending)
           ? <Loading />
-          : (
-              <>
-                <NoteTagsContainer noteTagList={noteTags ?? []} />
-                <NoteListTable noteList={noteList ?? []} />
-              </>
-            )
+          : <NoteListTable noteList={noteList ?? []} />
       }
     </main>
   )
