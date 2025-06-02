@@ -1,8 +1,6 @@
-import { deleteEchoById } from '@/actions/echos'
 import { Button } from '@/components/ui/button'
 import { useModalStore } from '@/store/use-modal-store'
 import { Edit2, Trash } from 'lucide-react'
-import { toast } from 'sonner'
 
 export default function ActionButtons({
   id,
@@ -16,22 +14,6 @@ export default function ActionButtons({
   reference: string
 }) {
   const { setModalOpen } = useModalStore()
-
-  const handleEchoDelete = async () => {
-    try {
-      await deleteEchoById(id)
-
-      toast.success(`删除成功~`)
-    }
-    catch (error) {
-      if (error instanceof Error) {
-        toast.error(`删除 echo 失败 ${error.message}`)
-      }
-      else {
-        toast.error(`删除 echo 失败`)
-      }
-    }
-  }
 
   return (
     <section className="flex items-center gap-1">
@@ -53,7 +35,9 @@ export default function ActionButtons({
         variant="outline"
         className="size-8 text-red-600 cursor-pointer"
         onClick={() => {
-          setModalOpen('deleteEchoModal', handleEchoDelete)
+          setModalOpen('deleteEchoModal', {
+            id,
+          })
         }}
       >
         <Trash />
