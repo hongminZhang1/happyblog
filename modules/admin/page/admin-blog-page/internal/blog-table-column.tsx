@@ -65,7 +65,7 @@ export const columns: ColumnDef<BlogListItem>[] = [
       const blog = row.original
 
       return (
-        <PublishToggleSwitch blogId={blog.id} isPublished={blog.isPublished} />
+        <PublishToggleSwitch blogId={blog.id} isPublished={blog.isPublished} key={blog.id} />
       )
     },
   },

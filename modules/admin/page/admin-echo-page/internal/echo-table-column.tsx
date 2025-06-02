@@ -52,7 +52,7 @@ export const columns: ColumnDef<Echo>[] = [
       )
     },
     cell: ({ row }) => {
-      return <PublishToggleSwitch echoId={row.original.id} isPublished={row.original.isPublished} />
+      return <PublishToggleSwitch echoId={row.original.id} isPublished={row.original.isPublished} key={row.original.id} />
     },
   },
   {
