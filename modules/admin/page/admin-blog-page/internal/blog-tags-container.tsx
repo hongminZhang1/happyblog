@@ -1,9 +1,9 @@
 'use client'
 
-import type { getBlogTags } from '@/actions/tags'
 import type {
   CarouselApi,
 } from '@/components/ui/carousel'
+import type { BlogTag } from '@prisma/client'
 import type { Dispatch, SetStateAction } from 'react'
 import { BlogTagItemToggle } from '@/components/shared/tag-item-toggle'
 import {
@@ -15,9 +15,7 @@ import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 
-export type BlogTagItem = Awaited<ReturnType<typeof getBlogTags>>[number]
-
-export function BlogTagsContainer({ blogTagList, setSelectedTags }: { blogTagList: BlogTagItem[], setSelectedTags: Dispatch<SetStateAction<string[]>> }) {
+export function BlogTagsContainer({ blogTagList, setSelectedTags }: { blogTagList: BlogTag[], setSelectedTags: Dispatch<SetStateAction<string[]>> }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(1)
   const [count, setCount] = useState(0)
