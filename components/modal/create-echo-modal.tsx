@@ -23,10 +23,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
-import { fetchAllEchosPromise } from '@/lib/api/echo'
-import { useEchoStore } from '@/store/use-echo-store'
 import { useModalStore } from '@/store/use-modal-store'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -34,7 +33,23 @@ import { toast } from 'sonner'
 export default function CreateEchoModal() {
   const { modalType, onModalClose } = useModalStore()
   const isModalOpen = modalType === 'createEchoModal'
-  const { setEchos } = useEchoStore()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: handleCreateEcho,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['echo-list'] })
+      toast.success(`创建成功`)
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(`创建引用失败~ ${error.message}`)
+      }
+      else {
+        toast.error(`创建引用失败~`)
+      }
+    },
+  })
 
   const form = useForm<CreateEchoDTO>({
     resolver: zodResolver(CreateEchoSchema),
@@ -46,33 +61,16 @@ export default function CreateEchoModal() {
     mode: 'onBlur',
   })
 
-  const handleCreateEcho = async (values: CreateEchoDTO) => {
-    try {
-      await createEcho(values)
-      const echos = await fetchAllEchosPromise()
-      setEchos(echos)
-      toast.success(`创建成功~`)
-    }
-    catch (error) {
-      if (error instanceof Error) {
-        toast.error(`创建引用失败 ${error.message}`)
-      }
-      else {
-        toast.error(`创建引用失败`)
-      }
-    }
-  }
-
-  function onSubmit(values: CreateEchoDTO) {
-    handleCreateEcho(values)
-    onModalClose()
-  }
-
   useEffect(() => {
     if (!isModalOpen) {
       form.reset()
     }
   }, [isModalOpen, form])
+
+  function onSubmit(values: CreateEchoDTO) {
+    mutation.mutate(values)
+    onModalClose()
+  }
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onModalClose}>
@@ -141,4 +139,8 @@ export default function CreateEchoModal() {
       </DialogContent>
     </Dialog>
   )
+}
+
+async function handleCreateEcho(values: CreateEchoDTO) {
+  await createEcho(values)
 }
