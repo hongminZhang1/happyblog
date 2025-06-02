@@ -1,39 +1,33 @@
+'use client'
+
 import { toggleEchoPublishedById } from '@/actions/echos'
 import { Switch } from '@/components/ui/switch'
-import { useEchoStore } from '@/store/use-echo-store'
-import { useTransition } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
-export default function PublishToggleSwitch({ echoId }: { echoId: number }) {
-  const { echos, setEchos } = useEchoStore()
+export default function PublishToggleSwitch({ echoId, isPublished: initial }: { echoId: number, isPublished: boolean }) {
+  const [isPublished, setIsPublished] = useState(initial)
   const [isPending, startTransition] = useTransition()
-
-  if (echos.length === 0)
-    return null
-
-  const echo = echos.find(item => item.id === echoId)
-  if (!echo)
-    return null
+  const queryClient = useQueryClient()
 
   const handleToggle = async () => {
-    const newStatus = !echo.isPublished
+    const newStatus = !isPublished
+    setIsPublished(newStatus)
 
-    const preEchos = [...echos]
-
-    const updated = echos.map(item =>
-      item.id === echoId ? { ...item, isPublished: newStatus } : item,
-    )
-
-    setEchos(updated)
     startTransition(async () => {
       try {
         await toggleEchoPublishedById(echoId, newStatus)
-        toast.success(`${newStatus ? '发布成功' : '隐藏成功'}`)
+        queryClient.invalidateQueries({
+          queryKey: ['echo-list'],
+          exact: false,
+        })
+        toast.success(`更新成功`)
       }
       catch (error) {
-        setEchos(preEchos)
+        setIsPublished(!newStatus)
         if (error instanceof Error) {
-          toast.error(`发布状态更新失败 ${error.message}`)
+          toast.error(`发布状态更新失败 ${error?.message}`)
         }
         else {
           toast.error(`发布状态更新失败`)
@@ -45,7 +39,7 @@ export default function PublishToggleSwitch({ echoId }: { echoId: number }) {
   return (
     <Switch
       onCheckedChange={handleToggle}
-      checked={echo.isPublished}
+      checked={isPublished}
       disabled={isPending}
     />
   )
