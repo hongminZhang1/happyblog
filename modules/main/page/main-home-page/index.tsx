@@ -5,8 +5,8 @@ import EchoCard from './internal/echo-card'
 import TechStack from './internal/tech-stack'
 import YeAvatar from './internal/ye-avatar'
 
-export default function MainLayoutContainer() {
-  const allPublishedEcho = getAllPublishedEcho()
+export default async function MainLayoutContainer() {
+  const allPublishedEcho = await getAllPublishedEcho()
 
   return (
     <motion.main

@@ -58,10 +58,13 @@
     "PGHOST",
     "PGPASSWORD",
     "PGUSER",
+    "reactjs",
+    "Sakura",
     "Shadcnui",
     "sonner",
     "UNPOOLED",
     "uploadthing",
-    "Vercel"
+    "Vercel",
+    "vuejs"
   ]
 }
