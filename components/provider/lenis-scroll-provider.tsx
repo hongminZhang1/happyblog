@@ -6,12 +6,18 @@ import { ReactLenis } from 'lenis/react'
 interface LenisScrollProviderProps {
   children: React.ReactNode
 }
+
+// copy from https://easings.net/en#easeOutQuint
+// https://easings.net/en
+function easeOutQuint(x: number): number {
+  return 1 - (1 - x) ** 5
+}
+
 const LenisScrollProvider: FC<LenisScrollProviderProps> = ({ children }) => {
   return (
     <ReactLenis
       options={{
-        duration: 1.2,
-        easing: t => Math.min(1, 1.001 - 2 ** (-10 * t)),
+        easing: easeOutQuint,
       }}
       root
     >
