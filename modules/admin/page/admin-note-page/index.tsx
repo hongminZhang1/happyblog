@@ -6,7 +6,7 @@ import Loading from '@/components/shared/loading'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import NoteListTable from './internal/note-list-table'
-import { NoteSearch } from './internal/note-search'
+import NoteSearch from './internal/note-search'
 import { NoteTagsContainer } from './internal/note-tags-container'
 
 export default function AdminNotePage() {

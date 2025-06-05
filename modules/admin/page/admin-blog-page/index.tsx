@@ -6,7 +6,7 @@ import Loading from '@/components/shared/loading'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import BlogListTable from './internal/blog-list-table'
-import { BlogSearch } from './internal/blog-search'
+import BlogSearch from './internal/blog-search'
 import { BlogTagsContainer } from './internal/blog-tags-container'
 
 export default function AdminBlogPage() {

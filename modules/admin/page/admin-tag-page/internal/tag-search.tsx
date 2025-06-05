@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useModalStore } from '@/store/use-modal-store'
 import { Plus, RotateCw, Search } from 'lucide-react'
-import { useRef } from 'react'
+import { memo, useRef } from 'react'
 
-export default function TagSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<string>> }) {
+function TagSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<string>> }) {
   const { setModalOpen } = useModalStore()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -67,3 +67,5 @@ export default function TagSearch({ setQuery }: { setQuery: Dispatch<SetStateAct
     </div>
   )
 }
+
+export default memo(TagSearch)

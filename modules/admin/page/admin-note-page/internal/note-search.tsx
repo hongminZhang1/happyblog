@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { Plus, RotateCw, Search } from 'lucide-react'
 import Link from 'next/link'
-import { useRef } from 'react'
+import { memo, useRef } from 'react'
 
-export function NoteSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<string>> }) {
+function NoteSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<string>> }) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -69,3 +69,5 @@ export function NoteSearch({ setQuery }: { setQuery: Dispatch<SetStateAction<str
     </section>
   )
 }
+
+export default memo(NoteSearch)
