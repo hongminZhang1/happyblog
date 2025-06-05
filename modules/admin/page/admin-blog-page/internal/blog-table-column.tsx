@@ -1,7 +1,7 @@
 'use client'
 
+import type { BlogListItem } from '@/actions/blogs/type'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { BlogListItem } from '../type'
 import TagItemBadge from '@/components/shared/tag-item-badge'
 import { Button } from '@/components/ui/button'
 import { prettyDateTime } from '@/lib/time'

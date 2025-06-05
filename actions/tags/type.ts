@@ -1,3 +1,4 @@
+import type { getAllTags } from '@/actions/tags'
 import { TAG_NAME_MAX_LENGTH } from '@/config/constant'
 import { TagType } from '@prisma/client'
 import { z } from 'zod'
@@ -17,3 +18,4 @@ export type DeleteTagDTO = UpdateTagNameDTO
 export type WithCountTagDTO = z.infer<typeof UpdateTagNameSchema> & {
   count: number
 }
+export type Tag = Awaited<ReturnType<typeof getAllTags>>[number]
