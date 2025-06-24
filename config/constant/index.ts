@@ -8,7 +8,7 @@ export const ADMIN_EMAILS = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',')
 
 // * 元数据，SEO，网页关键字。。。
 export const metadata: Metadata = {
-  title: `叶鱼 | 业余`,
+  title: `BLOG | ZHM `,
   description: '记录前端开发、技术文章与生活思考的博客站点',
   keywords: [
     '前端开发',
