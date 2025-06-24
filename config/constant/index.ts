@@ -19,7 +19,6 @@ export const metadata: Metadata = {
     'javascript',
     'typescript',
     '阅读',
-    '叶鱼',
   ],
   authors: [{ name: '叶鱼', url: 'https://useyeyu.cc' }],
   creator: '叶鱼',
