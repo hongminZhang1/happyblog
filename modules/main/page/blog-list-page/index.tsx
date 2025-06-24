@@ -28,7 +28,7 @@ export default async function BlogListPage() {
   const allBlogs = await getAllShowBlogs()
 
   if (allBlogs.length === 0) {
-    return <p className="m-auto">虚无。</p>
+    return <p className="m-auto"> 虚无。</p>
   }
 
   return (
