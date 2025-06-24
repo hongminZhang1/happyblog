@@ -18,7 +18,6 @@ export const metadata: Metadata = {
     'vue',
     'javascript',
     'typescript',
-    '阅读',
   ],
   authors: [{ name: '叶鱼', url: 'https://useyeyu.cc' }],
   creator: '叶鱼',
