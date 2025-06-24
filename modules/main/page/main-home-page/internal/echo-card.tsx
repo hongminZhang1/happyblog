@@ -19,7 +19,7 @@ export default function EchoCard({ allPublishedEcho }: { allPublishedEcho: Echo[
                   backdrop-blur-3xl"
     >
       <p suppressHydrationWarning className="underline drop-shadow-[0_0_0.75rem_#211C84] dark:drop-shadow-[0_0_0.75rem_#91DDCF]">
-        {echo?.content ?? '虚无。'}
+        {echo?.content ?? '自强不息，止于至善。'}
       </p>
       <footer
         suppressHydrationWarning
@@ -27,7 +27,7 @@ export default function EchoCard({ allPublishedEcho }: { allPublishedEcho: Echo[
                     drop-shadow-[0_0_0.75rem_#211C84] dark:drop-shadow-[0_0_0.75rem_#91DDCF]"
       >
         「
-        {echo?.reference ?? '无名。'}
+        {echo?.reference ?? '厦门大学校训'}
         」
       </footer>
     </section>

@@ -6,9 +6,9 @@ export default function BioSection() {
         <span className="font-bold text-purple-400"> ZHM </span>
         的博客空间
       </p>
-      <p>
+      {/* <p>
         我是一个...
-      </p>
+      </p> */}
       <small className="text-xs md:text-sm">
         话说敲两下头像可以切换主题来着
         {' '}
