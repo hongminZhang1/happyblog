@@ -26,7 +26,7 @@ export const useModalStore = create<IModalStore>(set => ({
       payload,
     })
   },
-  // * 可以直接不用这个函数的, 直接使用 setModalOpen(null) 来替代, 但是我想更纯粹一点
+  // *可以直接不用这个函数的, 直接使用 setModalOpen(null) 来替代, 但是我想更纯粹一点
   onModalClose: () => {
     set({ modalType: null })
   },
