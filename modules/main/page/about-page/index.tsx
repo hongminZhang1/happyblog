@@ -24,7 +24,7 @@ export default function AboutPage() {
         </h2>
         <HorizontalDividingLine fill="#006A71" />
 
-        <p>hello world</p>
+        <p>print("hello world")</p>
 
         <HorizontalDividingLine fill="#107B80" />
 
