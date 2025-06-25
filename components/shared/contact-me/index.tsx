@@ -3,19 +3,15 @@ import Link from 'next/link'
 const ExternalLinks = [
   {
     name: 'GitHub',
-    url: 'https://github.com/NeilYeTAT',
+    url: 'https://github.com/hongminZhang1',
   },
   {
     name: 'bilibili',
-    url: 'https://space.bilibili.com/1859558916',
+    url: 'https://space.bilibili.com/3546620134165431',
   },
   {
-    name: '掘金',
-    url: 'https://juejin.cn/user/64204896208252',
-  },
-  {
-    name: 'Gmail',
-    url: 'mailto:nearjilt@gmail.com',
+    name: 'CSDN',
+    url: 'https://blog.csdn.net/2301_78689948',
   },
 ] as const
 
