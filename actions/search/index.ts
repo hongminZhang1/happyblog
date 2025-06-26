@@ -62,7 +62,7 @@ export async function searchContent(query: string, searchType: SearchType = 'all
       ...blogs.map(blog => ({
         ...blog,
         type: 'blog' as const,
-      }))
+      })),
     )
   }
 
@@ -89,7 +89,7 @@ export async function searchContent(query: string, searchType: SearchType = 'all
       ...notes.map(note => ({
         ...note,
         type: 'note' as const,
-      }))
+      })),
     )
   }
 

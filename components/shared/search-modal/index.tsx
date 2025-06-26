@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import { Search, FileText, BookOpen, Calendar, Tag } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { BookOpen, Calendar, FileText, Search, Tag } from 'lucide-react'
+import * as motion from 'motion/react-client'
+import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
 import { searchContent, type SearchResult, type SearchType } from '@/actions/search'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import * as motion from 'motion/react-client'
 
 interface SearchModalProps {
   open: boolean
@@ -40,10 +40,12 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
       try {
         const searchResults = await searchContent(query, searchType)
         setResults(searchResults)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('搜索失败:', error)
         setResults([])
-      } finally {
+      }
+      finally {
         setLoading(false)
       }
     }
@@ -60,31 +62,33 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
 
   const highlightText = (text: string, query: string) => {
     if (!query.trim()) return text
-    
+
     const regex = new RegExp(`(${query})`, 'gi')
     const parts = text.split(regex)
-    
-    return parts.map((part, index) => 
-      regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800/50 px-1 rounded">
-          {part}
-        </mark>
-      ) : (
-        part
-      )
+
+    return parts.map((part, index) =>
+      regex.test(part)
+        ? (
+            <mark key={index} className="bg-yellow-200 dark:bg-yellow-800/50 px-1 rounded">
+              {part}
+            </mark>
+          )
+        : (
+            part
+          ),
     )
   }
 
   const getContentPreview = (content: string, query: string) => {
     if (!query.trim()) return content.slice(0, 150) + '...'
-    
+
     const index = content.toLowerCase().indexOf(query.toLowerCase())
     if (index === -1) return content.slice(0, 150) + '...'
-    
+
     const start = Math.max(0, index - 50)
     const end = Math.min(content.length, index + query.length + 100)
     const preview = content.slice(start, end)
-    
+
     return (start > 0 ? '...' : '') + preview + (end < content.length ? '...' : '')
   }
 
@@ -103,7 +107,7 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
             <Input
               placeholder="搜索标题或内容..."
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={e => setQuery(e.target.value)}
               className="w-full"
               autoFocus
             />
@@ -142,7 +146,7 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
           )}
 
           {!loading && results.length > 0 && (
-            <motion.div 
+            <motion.div
               className="space-y-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -159,13 +163,15 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
-                      {result.type === 'blog' ? (
-                        <FileText className="w-5 h-5 text-blue-500" />
-                      ) : (
-                        <BookOpen className="w-5 h-5 text-green-500" />
-                      )}
+                      {result.type === 'blog'
+                        ? (
+                            <FileText className="w-5 h-5 text-blue-500" />
+                          )
+                        : (
+                            <BookOpen className="w-5 h-5 text-green-500" />
+                          )}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">
                         <Badge variant={result.type === 'blog' ? 'default' : 'secondary'}>
@@ -176,19 +182,19 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
                           {new Date(result.createdAt).toLocaleDateString()}
                         </div>
                       </div>
-                      
+
                       <h3 className="font-medium text-lg mb-2 line-clamp-1">
                         {highlightText(result.title, query)}
                       </h3>
-                      
+
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                         {highlightText(getContentPreview(result.content, query), query)}
                       </p>
-                      
+
                       {result.tags.length > 0 && (
                         <div className="flex items-center gap-1 flex-wrap">
                           <Tag className="w-3 h-3 text-muted-foreground" />
-                          {result.tags.slice(0, 3).map((tag) => (
+                          {result.tags.slice(0, 3).map(tag => (
                             <Badge key={tag.tagName} variant="outline" className="text-xs">
                               {tag.tagName}
                             </Badge>
