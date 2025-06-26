@@ -1,26 +1,25 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Search } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import SearchModal from '@/components/shared/search-modal'
+import { Button } from '@/components/ui/button'
+import { Search } from 'lucide-react'
 import * as motion from 'motion/react-client'
+import { useEffect, useState } from 'react'
 
 export default function FloatingSearchButton() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
 
-  // 滚动时隐藏/显示按钮
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
 
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false) // 向下滚动时隐藏
+        setIsVisible(false)
       }
       else {
-        setIsVisible(true) // 向上滚动时显示
+        setIsVisible(true)
       }
 
       setLastScrollY(currentScrollY)
@@ -57,4 +56,4 @@ export default function FloatingSearchButton() {
       <SearchModal open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   )
-} 
+}

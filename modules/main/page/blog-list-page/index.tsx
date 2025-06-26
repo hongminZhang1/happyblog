@@ -1,5 +1,4 @@
 import { getAllShowBlogs } from '@/actions/blogs'
-import ListSearchBar from '@/components/shared/list-search-bar'
 import * as motion from 'motion/react-client'
 import BlogListItem from './internal/blog-list-item'
 

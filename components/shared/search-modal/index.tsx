@@ -1,15 +1,15 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { BookOpen, Calendar, FileText, Search, Tag } from 'lucide-react'
-import * as motion from 'motion/react-client'
+import type { SearchResult, SearchType } from '@/actions/search'
+import { searchContent } from '@/actions/search'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { searchContent, type SearchResult, type SearchType } from '@/actions/search'
+import { BookOpen, Calendar, FileText, Search, Tag } from 'lucide-react'
+import * as motion from 'motion/react-client'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 interface SearchModalProps {
   open: boolean
@@ -22,12 +22,6 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-
-  // 防抖搜索
-  const debouncedQuery = useMemo(() => {
-    const handler = setTimeout(() => query, 300)
-    return () => clearTimeout(handler)
-  }, [query])
 
   useEffect(() => {
     const searchData = async () => {
@@ -61,7 +55,8 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
   }
 
   const highlightText = (text: string, query: string) => {
-    if (!query.trim()) return text
+    if (!query.trim())
+      return text
 
     const regex = new RegExp(`(${query})`, 'gi')
     const parts = text.split(regex)
@@ -80,16 +75,18 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
   }
 
   const getContentPreview = (content: string, query: string) => {
-    if (!query.trim()) return content.slice(0, 150) + '...'
+    if (!query.trim())
+      return `${content.slice(0, 150)}...`
 
     const index = content.toLowerCase().indexOf(query.toLowerCase())
-    if (index === -1) return content.slice(0, 150) + '...'
+    if (index === -1)
+      return `${content.slice(0, 150)}...`
 
     const start = Math.max(0, index - 50)
     const end = Math.min(content.length, index + query.length + 100)
     const preview = content.slice(start, end)
 
-    return (start > 0 ? '...' : '') + preview + (end < content.length ? '...' : '')
+    return `${start > 0 ? '...' : ''}${preview}${end < content.length ? '...' : ''}`
   }
 
   return (
@@ -200,7 +197,10 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
                             </Badge>
                           ))}
                           {result.tags.length > 3 && (
-                            <span className="text-xs text-muted-foreground">+{result.tags.length - 3}</span>
+                            <Badge variant="outline" className="text-xs">
+                              +
+                              {result.tags.length - 3}
+                            </Badge>
                           )}
                         </div>
                       )}
@@ -211,11 +211,7 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
             </motion.div>
           )}
         </div>
-
-        <div className="text-xs text-muted-foreground text-center pt-3 border-t">
-          按 ESC 键关闭搜索
-        </div>
       </DialogContent>
     </Dialog>
   )
-} 
+}

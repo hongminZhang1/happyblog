@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "dev:no": "next dev",
-    "prebuild": "rm -rf .next/cache",
+    "prebuild": "npx rimraf .next/cache",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

@@ -7,7 +7,7 @@ Disallow: /auth/
 Disallow: /auth/*
 
 # Host
-Host: https://useyeyu.cc
+Host: https://homgzha.cc
 
 # Sitemaps
-Sitemap: https://useyeyu.cc/sitemap.xml
+Sitemap: https://homgzha.cc/sitemap.xml
