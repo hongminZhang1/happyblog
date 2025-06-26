@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { Search } from 'lucide-react'
-import * as motion from 'motion/react-client'
 import { Button } from '@/components/ui/button'
 import SearchModal from '@/components/shared/search-modal'
+import * as motion from 'motion/react-client'
 
 export default function FloatingSearchButton() {
   const [searchOpen, setSearchOpen] = useState(false)

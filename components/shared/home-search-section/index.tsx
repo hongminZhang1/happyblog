@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
+import * as motion from 'motion/react-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { type SearchType } from '@/actions/search'
-import { useRouter } from 'next/navigation'
-import * as motion from 'motion/react-client'
+import type { SearchType } from '@/actions/search'
 
 export default function HomeSearchSection() {
   const [query, setQuery] = useState('')
