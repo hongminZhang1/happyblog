@@ -1,6 +1,6 @@
 import HorizontalDividingLine from '@/components/shared/horizontal-dividing-line'
 import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
-import { ArrowDownIcon } from 'lucide-react'
+// import { ArrowDownIcon } from 'lucide-react'
 import * as motion from 'motion/react-client'
 import Link from 'next/link'
 
@@ -15,13 +15,19 @@ export default function AboutPage() {
       }}
     >
       <MaxWidthWrapper className="md:text-lg text-center flex items-center justify-center flex-col gap-4 mt-4">
-        <p>嘿, 你好呀~👋🏻</p>
+        <p>嘿, 你好呀</p>
         <h2>
           你可以叫我,
           {' '}
           <span className="font-bold text-purple-400">夜狗侠</span>
           {' '}
         </h2>
+        <p>
+          这是我基于
+          <Link href="https://github.com/NeilYeTAT/yeyu-blog" className="underline">开源项目</Link>
+          搭建的简易博客网站
+        </p>
+        <h2>后台评论系统暂未开启</h2>
         <HorizontalDividingLine fill="#006A71" />
 
         <p>print("hello world")</p>
