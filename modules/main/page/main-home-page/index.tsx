@@ -1,4 +1,5 @@
 import { getAllPublishedEcho } from '@/actions/echos'
+import HomeSearchSection from '@/components/shared/home-search-section'
 import * as motion from 'motion/react-client'
 import BioSection from './internal/bio-section'
 import EchoCard from './internal/echo-card'
@@ -20,6 +21,7 @@ export default async function MainLayoutContainer() {
     >
       <YeAvatar />
       <BioSection />
+      <HomeSearchSection />
       <EchoCard allPublishedEcho={allPublishedEcho} />
       <TechStack />
     </motion.main>

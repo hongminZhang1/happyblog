@@ -5,6 +5,7 @@ import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import StarsBackground from '@/components/shared/stars-background'
 import StartUpMotion from '@/components/shared/start-up-motion'
 import MainLayoutHeader from '@/modules/main/layout/main-layout-header'
+// import FloatingSearchButton from '@/components/shared/floating-search-button'
 
 export default function MainLayout({
   children,
@@ -31,6 +32,9 @@ export default function MainLayout({
         <StartUpMotion />
         <StarsBackground />
       </main>
+
+      {/* 浮动搜索按钮 - 可选功能 */}
+      {/* <FloatingSearchButton /> */}
     </LenisScrollProvider>
   )
 }
