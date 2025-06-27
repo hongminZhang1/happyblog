@@ -52,7 +52,7 @@ export default function HomeSearchSection() {
           <div className="flex gap-3">
             <div className="flex-1">
               <Input
-                placeholder="输入关键词搜索..."
+                placeholder="关键词"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
