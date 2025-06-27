@@ -3,7 +3,6 @@ import HomeSearchSection from '@/components/shared/home-search-section'
 import * as motion from 'motion/react-client'
 import BioSection from './internal/bio-section'
 import EchoCard from './internal/echo-card'
-import TechStack from './internal/tech-stack'
 import YeAvatar from './internal/ye-avatar'
 
 export default async function MainLayoutContainer() {
@@ -23,7 +22,6 @@ export default async function MainLayoutContainer() {
       <BioSection />
       <HomeSearchSection />
       <EchoCard allPublishedEcho={allPublishedEcho} />
-      <TechStack />
     </motion.main>
   )
 }

@@ -46,7 +46,7 @@ export default function HomeSearchSection() {
         <div className="relative bg-background/80 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg">
           <div className="text-center mb-4">
             <h3 className="text-lg font-semibold mb-2">搜索内容</h3>
-            <p className="text-sm text-muted-foreground">探索博客文章和学习笔记</p>
+            {/* <p className="text-sm text-muted-foreground">探索博客文章和学习笔记</p> */}
           </div>
 
           <div className="flex gap-3">

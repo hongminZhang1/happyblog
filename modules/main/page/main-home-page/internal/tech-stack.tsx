@@ -68,9 +68,9 @@ function TechStack() {
 
   return (
     <div>
-      <ArrowDown height={100} width={40} className="animate-bounce mx-auto" />
+      <ArrowDown height={100} width={40} className="mx-auto" />
       {/* 尺子量的~ */}
-      <section className="relative size-[250px] md:size-[500px] rounded-full animate-ye-spin-slowly">
+      <section className="relative size-[250px] md:size-[500px] rounded-full">
         {techStackSvg.map((svg, i) => (
           <div
             key={svg.key}

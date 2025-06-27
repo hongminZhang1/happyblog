@@ -58,7 +58,9 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
     if (!query.trim())
       return text
 
-    const regex = new RegExp(`(${query})`, 'gi')
+    // 转义正则表达式特殊字符
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(`(${escapedQuery})`, 'gi')
     const parts = text.split(regex)
 
     return parts.map((part, index) =>

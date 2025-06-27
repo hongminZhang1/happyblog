@@ -76,7 +76,9 @@ export default function SearchPage() {
   const highlightText = (text: string, query: string) => {
     if (!query.trim()) return text
 
-    const regex = new RegExp(`(${query})`, 'gi')
+    // 转义正则表达式特殊字符
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(`(${escapedQuery})`, 'gi')
     const parts = text.split(regex)
 
     return parts.map((part, index) =>
