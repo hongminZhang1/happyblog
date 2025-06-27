@@ -61,7 +61,7 @@ export default function HomeSearchSection() {
             </div>
 
             <Select value={searchType} onValueChange={(value: SearchType) => setSearchType(value)}>
-              <SelectTrigger className="w-28 h-10">
+              <SelectTrigger className="w-20 h-12">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
