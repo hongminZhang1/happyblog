@@ -81,7 +81,8 @@ export default function SearchPage() {
 
     return parts.map((part, index) =>
       regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800/50 px-1 rounded">
+        // eslint-disable-next-line react/no-array-index-key
+        <mark key={`highlight-${index}-${part}`} className="bg-yellow-200 dark:bg-yellow-800/50 px-1 rounded">
           {part}
         </mark>
       ) : (
@@ -210,12 +211,12 @@ export default function SearchPage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                {results.map((result, index) => (
+                {results.map(result => (
                   <motion.div
                     key={`${result.type}-${result.id}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    transition={{ duration: 0.3, delay: (result.id % 10) * 0.05 }}
                   >
                     <Card className="p-6 hover:shadow-md transition-shadow">
                       <Link href={`/${result.type}/${result.slug}`} className="block">

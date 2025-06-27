@@ -64,7 +64,8 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
     return parts.map((part, index) =>
       regex.test(part)
         ? (
-            <mark key={index} className="bg-yellow-200 dark:bg-yellow-800/50 px-1 rounded">
+            // eslint-disable-next-line react/no-array-index-key
+            <mark key={`highlight-${index}-${part}`} className="bg-yellow-200 dark:bg-yellow-800/50 px-1 rounded">
               {part}
             </mark>
           )
@@ -149,14 +150,14 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              {results.map((result, index) => (
+              {results.map(result => (
                 <motion.div
                   key={`${result.type}-${result.id}`}
                   className="p-4 border rounded-lg hover:bg-accent/50 cursor-pointer transition-colors"
                   onClick={() => handleResultClick(result)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  transition={{ duration: 0.3, delay: (result.id % 10) * 0.05 }}
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
