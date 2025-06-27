@@ -1,3 +1,5 @@
+'use server'
+
 import { prisma } from '@/db'
 
 export type SearchType = 'all' | 'blog' | 'note'
