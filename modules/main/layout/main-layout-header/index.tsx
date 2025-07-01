@@ -23,8 +23,8 @@ const RouteList = [
     pathName: '笔记',
   },
   {
-    path: '/about',
-    pathName: '关于',
+    path: '/ai',
+    pathName: 'AI助手',
   },
 ] as const
 
