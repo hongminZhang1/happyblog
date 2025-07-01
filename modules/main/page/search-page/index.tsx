@@ -2,11 +2,11 @@
 
 import type { SearchResult, SearchType } from '@/actions/search'
 import { searchContent } from '@/actions/search'
+import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import { BookOpen, Calendar, FileText, Search, Tag } from 'lucide-react'
 import * as motion from 'motion/react-client'
 import Link from 'next/link'
@@ -33,16 +33,18 @@ export default function SearchPage() {
       setLoading(true)
       setError(null)
       // console.log('开始搜索:', { query, searchType }) // 调试信息
-      
+
       try {
         const searchResults = await searchContent(query, searchType)
         // console.log('搜索结果:', searchResults) // 调试信息
         setResults(searchResults)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('搜索失败:', error)
         setError(error instanceof Error ? error.message : '搜索失败')
         setResults([])
-      } finally {
+      }
+      finally {
         setLoading(false)
       }
     }
@@ -58,7 +60,7 @@ export default function SearchPage() {
     if (newType !== 'all') {
       params.set('type', newType)
     }
-    
+
     const newURL = params.toString() ? `/search?${params.toString()}` : '/search'
     router.replace(newURL, { scroll: false })
   }
@@ -74,7 +76,8 @@ export default function SearchPage() {
   }
 
   const highlightText = (text: string, query: string) => {
-    if (!query.trim()) return text
+    if (!query.trim())
+      return text
 
     // 转义正则表达式特殊字符
     const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -89,15 +92,17 @@ export default function SearchPage() {
         </mark>
       ) : (
         part
-      )
+      ),
     )
   }
 
   const getContentPreview = (content: string, query: string) => {
-    if (!query.trim()) return `${content.slice(0, 200)}...`
+    if (!query.trim())
+      return `${content.slice(0, 200)}...`
 
     const index = content.toLowerCase().indexOf(query.toLowerCase())
-    if (index === -1) return `${content.slice(0, 200)}...`
+    if (index === -1)
+      return `${content.slice(0, 200)}...`
 
     const start = Math.max(0, index - 80)
     const end = Math.min(content.length, index + query.length + 120)
@@ -122,7 +127,7 @@ export default function SearchPage() {
               <Input
                 placeholder="输入关键词搜索..."
                 value={query}
-                onChange={(e) => handleQueryChange(e.target.value)}
+                onChange={e => handleQueryChange(e.target.value)}
                 className="w-full"
                 autoFocus
               />
@@ -141,7 +146,9 @@ export default function SearchPage() {
 
           {query && (
             <p className="text-sm text-muted-foreground">
-              搜索关键词: "<span className="font-medium">{query}</span>"
+              搜索关键词: "
+              <span className="font-medium">{query}</span>
+              "
               {searchType !== 'all' && ` 在 ${searchType === 'blog' ? '博客' : '笔记'} 中`}
             </p>
           )}
@@ -203,7 +210,9 @@ export default function SearchPage() {
             <>
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">
-                  搜索结果 ({results.length})
+                  搜索结果 (
+                  {results.length}
+                  )
                 </h2>
               </div>
 
@@ -224,11 +233,13 @@ export default function SearchPage() {
                       <Link href={`/${result.type}/${result.slug}`} className="block">
                         <div className="flex items-start gap-4">
                           <div className="flex-shrink-0 mt-1">
-                            {result.type === 'blog' ? (
-                              <FileText className="w-6 h-6 text-blue-500" />
-                            ) : (
-                              <BookOpen className="w-6 h-6 text-green-500" />
-                            )}
+                            {result.type === 'blog'
+                              ? (
+                                  <FileText className="w-6 h-6 text-blue-500" />
+                                )
+                              : (
+                                  <BookOpen className="w-6 h-6 text-green-500" />
+                                )}
                           </div>
 
                           <div className="flex-1 min-w-0">
@@ -256,14 +267,15 @@ export default function SearchPage() {
                             {result.tags.length > 0 && (
                               <div className="flex items-center gap-2 flex-wrap">
                                 <Tag className="w-3 h-3 text-muted-foreground" />
-                                {result.tags.slice(0, 4).map((tag) => (
+                                {result.tags.slice(0, 4).map(tag => (
                                   <Badge key={tag.tagName} variant="outline" className="text-xs">
                                     {tag.tagName}
                                   </Badge>
                                 ))}
                                 {result.tags.length > 4 && (
                                   <Badge variant="outline" className="text-xs">
-                                    +{result.tags.length - 4}
+                                    +
+                                    {result.tags.length - 4}
                                   </Badge>
                                 )}
                               </div>
@@ -281,4 +293,4 @@ export default function SearchPage() {
       </div>
     </MaxWidthWrapper>
   )
-} 
+}

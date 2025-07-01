@@ -39,7 +39,7 @@ export default function AiPage() {
         variants={containerVariants}
       >
         {/* 标题部分 */}
-        <motion.div 
+        <motion.div
           className="text-center space-y-4"
           variants={itemVariants}
         >
@@ -52,7 +52,7 @@ export default function AiPage() {
         </motion.div>
 
         {/* 功能介绍 */}
-        <motion.div 
+        <motion.div
           className="grid md:grid-cols-2 gap-6 w-full"
           variants={{
             hidden: {},
@@ -127,7 +127,7 @@ export default function AiPage() {
 
         {/* 即将推出提示 */}
         <motion.div
-          className="bg-gradient-to-r from-purple-50 to-emerald-50 dark:from-purple-950/20 dark:to-emerald-950/20 
+          className="bg-gradient-to-r from-purple-50 to-emerald-50 dark:from-purple-950/20 dark:to-emerald-950/20
                      border border-purple-200 dark:border-purple-800 rounded-lg p-6 text-center w-full max-w-2xl"
           variants={itemVariants}
         >
@@ -141,4 +141,4 @@ export default function AiPage() {
       </motion.main>
     </MaxWidthWrapper>
   )
-} 
+}

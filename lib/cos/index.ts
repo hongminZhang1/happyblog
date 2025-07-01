@@ -1,6 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+import path from 'node:path'
+
+// eslint-disable-next-line ts/no-require-imports
 const COS = require('cos-nodejs-sdk-v5')
-import path from 'path'
 
 // COS配置
 const cos = new COS({
@@ -24,11 +25,11 @@ export async function uploadToCOS(file: Buffer, fileName: string): Promise<strin
     const randomStr = Math.random().toString(36).substring(2)
     const uniqueFileName = `blog-images/${timestamp}_${randomStr}${ext}`
 
-    console.log('🔧 COS上传调试信息:')
-    console.log('   - 存储桶:', BUCKET)
-    console.log('   - 地域:', REGION)
-    console.log('   - 文件名:', uniqueFileName)
-    console.log('   - 域名:', DOMAIN)
+    console.warn('🔧 COS上传调试信息:')
+    console.warn('   - 存储桶:', BUCKET)
+    console.warn('   - 地域:', REGION)
+    console.warn('   - 文件名:', uniqueFileName)
+    console.warn('   - 域名:', DOMAIN)
 
     const result = await cos.putObject({
       Bucket: BUCKET,
@@ -44,18 +45,19 @@ export async function uploadToCOS(file: Buffer, fileName: string): Promise<strin
       Metadata: {
         'original-name': fileName,
         'upload-time': new Date().toISOString(),
-      }
+      },
     })
 
     const finalUrl = `${DOMAIN}/${uniqueFileName}`
-    
-    console.log('✅ COS上传成功!')
-    console.log('   - 返回的URL:', finalUrl)
-    console.log('   - 上传结果:', result)
-    
+
+    console.warn('✅ COS上传成功!')
+    console.warn('   - 返回的URL:', finalUrl)
+    console.warn('   - 上传结果:', result)
+
     // 返回完整的文件URL
     return finalUrl
-  } catch (error) {
+  }
+  catch (error) {
     console.error('❌ COS上传失败:', error)
     throw new Error('文件上传失败')
   }
@@ -77,7 +79,8 @@ export async function deleteFromCOS(fileUrl: string): Promise<boolean> {
     })
 
     return true
-  } catch (error) {
+  }
+  catch (error) {
     console.error('COS删除失败:', error)
     return false
   }
@@ -127,10 +130,11 @@ export async function generateSignedUrl(key: string, expires = 3600): Promise<st
       Sign: true,
       Expires: expires,
     })
-    
+
     return url
-  } catch (error) {
+  }
+  catch (error) {
     console.error('生成签名URL失败:', error)
     throw new Error('生成签名URL失败')
   }
-} 
+}

@@ -34,12 +34,12 @@ export default async function BlogListPage() {
   return (
     <div className="flex flex-col px-4">
       {/* 搜索栏 - 可选功能 */}
-      {/* <ListSearchBar 
-        placeholder="搜索博客文章..." 
+      {/* <ListSearchBar
+        placeholder="搜索博客文章..."
         defaultType="blog"
         className="max-w-4xl mx-auto"
       /> */}
-      
+
       <motion.main
         className="flex flex-col"
         initial="hidden"

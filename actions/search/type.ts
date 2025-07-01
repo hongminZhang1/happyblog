@@ -15,4 +15,4 @@ export interface SearchParams {
   type: SearchType
   page?: number
   limit?: number
-} 
+}

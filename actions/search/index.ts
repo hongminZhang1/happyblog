@@ -92,4 +92,4 @@ export async function searchContent(query: string, type: SearchType = 'all'): Pr
     console.error('搜索失败:', error)
     return []
   }
-} 
+}
