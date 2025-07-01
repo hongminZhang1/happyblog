@@ -1,7 +1,7 @@
 import { getPublishedBlogHTMLBySlug } from '@/actions/blogs'
 import ArticleDisplayPage from '@/components/shared/article-display-page'
-// import CommentCard from '@/components/shared/comment-card'
-// import HorizontalDividingLine from '@/components/shared/horizontal-dividing-line'
+import CommentCard from '@/components/shared/comment-card'
+import HorizontalDividingLine from '@/components/shared/horizontal-dividing-line'
 import ScrollIndicator from '@/components/shared/scroll-indicator'
 import { prisma } from '@/db'
 import { notFound } from 'next/navigation'
@@ -42,8 +42,6 @@ export default async function Page({
     notFound()
 
   const { content, title, createdAt, tags, id } = article
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  void id // 保留 id 用于将来可能恢复的评论功能
 
   const tagNames = tags.map(v => v.tagName)
 
@@ -55,8 +53,8 @@ export default async function Page({
         content={content}
         tags={tagNames}
       />
-      {/* <HorizontalDividingLine fill="#EC7FA9" /> */}
-      {/* <CommentCard term={`${title}-blog-${id}`} /> */}
+      <HorizontalDividingLine fill="#EC7FA9" />
+      <CommentCard term={`${title}-blog-${id}`} />
       <ScrollIndicator />
     </div>
   )
