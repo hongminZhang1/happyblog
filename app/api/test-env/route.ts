@@ -13,4 +13,4 @@ export async function GET() {
     platform: process.platform,
     timestamp: new Date().toISOString(),
   })
-} 
+}
