@@ -41,7 +41,17 @@ function getAuthUrl() {
 export async function POST(request: NextRequest) {
   try {
     // 检查环境变量
+    console.log('Environment check:', {
+      hasAppId: !!process.env.SPARK_APP_ID,
+      hasApiKey: !!process.env.SPARK_API_KEY,
+      hasApiSecret: !!process.env.SPARK_API_SECRET,
+      appIdLength: process.env.SPARK_APP_ID?.length || 0,
+      apiKeyLength: process.env.SPARK_API_KEY?.length || 0,
+      nodeEnv: process.env.NODE_ENV
+    })
+
     if (!SPARK_API_CONFIG.appId || !SPARK_API_CONFIG.apiKey || !SPARK_API_CONFIG.apiSecret) {
+      console.error('Missing environment variables')
       return NextResponse.json({ error: '缺少必要的环境变量' }, { status: 500 })
     }
 
@@ -59,6 +69,7 @@ export async function POST(request: NextRequest) {
     })
   }
   catch (error) {
+    console.error('API Error:', error)
     return NextResponse.json(
       { error: `讯飞星火API错误: ${error instanceof Error ? error.message : '未知错误'}` },
       { status: 500 },
@@ -69,12 +80,28 @@ export async function POST(request: NextRequest) {
 async function callSparkAPI(messages: any[]): Promise<string> {
   return new Promise((resolve, reject) => {
     const authUrl = getAuthUrl()
+    console.log('Connecting to:', authUrl)
+    
     const ws = new WebSocket(authUrl)
 
     let response = ''
     let isResolved = false
 
+    // 设置超时 - vercel函数有时间限制
+    const timeout = setTimeout(() => {
+      if (!isResolved) {
+        console.error('Request timeout')
+        isResolved = true
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.close()
+        }
+        reject(new Error('请求超时'))
+      }
+    }, 25000) // 25秒超时
+
     ws.on('open', () => {
+      console.log('WebSocket connected')
+      
       const requestMessage = {
         header: {
           app_id: SPARK_API_CONFIG.appId,
@@ -107,7 +134,9 @@ async function callSparkAPI(messages: any[]): Promise<string> {
         const result = JSON.parse(data.toString())
 
         if (result.header && result.header.code !== 0) {
+          console.error('API error:', result.header.code, result.header.message)
           if (!isResolved) {
+            clearTimeout(timeout)
             isResolved = true
             reject(new Error(`API错误: ${result.header.message || result.header.code}`))
           }
@@ -122,15 +151,19 @@ async function callSparkAPI(messages: any[]): Promise<string> {
         }
 
         if (result.header && result.header.status === 2) {
+          console.log('Response completed')
           ws.close()
           if (!isResolved) {
+            clearTimeout(timeout)
             isResolved = true
             resolve(response || '无响应内容')
           }
         }
       }
       catch (error) {
+        console.error('Parse error:', error)
         if (!isResolved) {
+          clearTimeout(timeout)
           isResolved = true
           reject(new Error(`解析响应失败: ${error instanceof Error ? error.message : '未知错误'}`))
         }
@@ -138,14 +171,18 @@ async function callSparkAPI(messages: any[]): Promise<string> {
     })
 
     ws.on('error', (error) => {
+      console.error('WebSocket error:', error)
       if (!isResolved) {
+        clearTimeout(timeout)
         isResolved = true
         reject(new Error(`WebSocket错误: ${error.message}`))
       }
     })
 
     ws.on('close', (code, reason) => {
+      console.log('WebSocket closed:', code, reason?.toString())
       if (!isResolved) {
+        clearTimeout(timeout)
         isResolved = true
         if (code !== 1000) {
           reject(new Error(`连接异常关闭: ${code} ${reason?.toString() || '未知原因'}`))
