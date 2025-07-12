@@ -41,13 +41,13 @@ function getAuthUrl() {
 export async function POST(request: NextRequest) {
   try {
     // 检查环境变量
-    console.log('Environment check:', {
+    console.error('Environment check:', {
       hasAppId: !!process.env.SPARK_APP_ID,
       hasApiKey: !!process.env.SPARK_API_KEY,
       hasApiSecret: !!process.env.SPARK_API_SECRET,
       appIdLength: process.env.SPARK_APP_ID?.length || 0,
       apiKeyLength: process.env.SPARK_API_KEY?.length || 0,
-      nodeEnv: process.env.NODE_ENV
+      nodeEnv: process.env.NODE_ENV,
     })
 
     if (!SPARK_API_CONFIG.appId || !SPARK_API_CONFIG.apiKey || !SPARK_API_CONFIG.apiSecret) {
@@ -80,8 +80,8 @@ export async function POST(request: NextRequest) {
 async function callSparkAPI(messages: any[]): Promise<string> {
   return new Promise((resolve, reject) => {
     const authUrl = getAuthUrl()
-    console.log('Connecting to:', authUrl)
-    
+    console.error('Connecting to:', authUrl)
+
     const ws = new WebSocket(authUrl)
 
     let response = ''
@@ -100,8 +100,8 @@ async function callSparkAPI(messages: any[]): Promise<string> {
     }, 25000) // 25秒超时
 
     ws.on('open', () => {
-      console.log('WebSocket connected')
-      
+      console.error('WebSocket connected')
+
       const requestMessage = {
         header: {
           app_id: SPARK_API_CONFIG.appId,
@@ -151,7 +151,7 @@ async function callSparkAPI(messages: any[]): Promise<string> {
         }
 
         if (result.header && result.header.status === 2) {
-          console.log('Response completed')
+          console.error('Response completed')
           ws.close()
           if (!isResolved) {
             clearTimeout(timeout)
@@ -180,7 +180,7 @@ async function callSparkAPI(messages: any[]): Promise<string> {
     })
 
     ws.on('close', (code, reason) => {
-      console.log('WebSocket closed:', code, reason?.toString())
+      console.error('WebSocket closed:', code, reason?.toString())
       if (!isResolved) {
         clearTimeout(timeout)
         isResolved = true

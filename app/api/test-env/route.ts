@@ -11,6 +11,6 @@ export async function GET() {
     apiSecretLength: process.env.SPARK_API_SECRET?.length || 0,
     nodeEnv: process.env.NODE_ENV,
     platform: process.platform,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   })
 } 
