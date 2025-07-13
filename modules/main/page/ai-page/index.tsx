@@ -141,6 +141,17 @@ export default function AiPage() {
     }
   }
 
+  const handleClearMessages = () => {
+    setMessages([
+      {
+        id: '1',
+        content: '您好！我是讯飞星火AI智能助手，很高兴为您服务。请问有什么可以帮助您的吗？',
+        role: 'assistant',
+        timestamp: new Date(),
+      },
+    ])
+  }
+
   return (
     <div className="py-4 h-screen overflow-hidden">
       <MaxWidthWrapper>
@@ -234,6 +245,14 @@ export default function AiPage() {
                   className="flex-1"
                   disabled={isLoading}
                 />
+                <Button
+                  onClick={handleClearMessages}
+                  disabled={isLoading}
+                  variant="outline"
+                  className="px-4"
+                >
+                  清空
+                </Button>
                 <Button
                   onClick={handleSendMessage}
                   disabled={!inputValue.trim() || isLoading}
