@@ -163,6 +163,24 @@ body::-webkit-scrollbar-thumb {
   border-radius: 8px;
 }
 
+/* 聊天框滚动条样式 */
+.chat-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 3px;
+}
+
+.chat-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.6);
+}
+
 /* * markdown 渲染时的代码主题 */
 /* ! 这里的 data-theme='${ }' lib/markdown/index.ts 中的主题名 */
 code[data-theme*='github-light'],

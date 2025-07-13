@@ -3,7 +3,6 @@
 import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import * as motion from 'motion/react-client'
 import { useEffect, useRef, useState } from 'react'
 
@@ -61,11 +60,7 @@ export default function AiPage() {
   // 自动滚动到底部
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
-      // 获取ScrollArea内部的滚动容器
-      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
-      if (scrollContainer) {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight
-      }
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
     }
   }
 
@@ -163,9 +158,6 @@ export default function AiPage() {
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-emerald-400 bg-clip-text text-transparent">
             Talk to AI
           </h1>
-          <p className="text-sm text-muted-foreground">
-            与讯飞星火大模型对话，获得智能问答和技术帮助
-          </p>
         </motion.div>
 
         {/* 聊天容器 */}
@@ -176,9 +168,16 @@ export default function AiPage() {
         >
           {/* 消息显示区域 */}
           <div className="flex-1 overflow-hidden">
-            <ScrollArea
-              className="h-full"
+            <div
+              className="overflow-y-auto chat-scroll-area"
               ref={scrollAreaRef}
+              data-lenis-prevent
+              style={{
+                height: 'calc(75vh - 120px)', // 减去标题和输入框的高度
+                scrollBehavior: 'smooth',
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'rgba(156, 163, 175, 0.4) transparent',
+              }}
             >
               <div className="p-4">
                 <div className="space-y-4">
@@ -220,7 +219,7 @@ export default function AiPage() {
                   {/* 滚动到底部的参考点 - 不再需要 */}
                 </div>
               </div>
-            </ScrollArea>
+            </div>
           </div>
 
           {/* 输入区域 - 固定在底部 */}
