@@ -51,7 +51,7 @@ export default function AiPage() {
     setMessages([
       {
         id: '1',
-        content: '您好！我是AI智能助手，很高兴为您服务。请问有什么可以帮助您的吗？',
+        content: '您好！我是讯飞星火AI智能助手，很高兴为您服务。请问有什么可以帮助您的吗？',
         role: 'assistant',
         timestamp: new Date(),
       },
@@ -91,8 +91,8 @@ export default function AiPage() {
     setIsLoading(true)
 
     try {
-      // 调用真实的AI API
-      const response = await fetch('/api/chat', {
+      // 使用讯飞星火API
+      const response = await fetch('/api/chat-spark', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ export default function AiPage() {
             Talk to AI
           </h1>
           <p className="text-sm text-muted-foreground">
-            与AI对话，获得编程和技术方面的帮助(内置Spark Pro模型)
+            与讯飞星火大模型对话，获得智能问答和技术帮助
           </p>
         </motion.div>
 
@@ -209,7 +209,9 @@ export default function AiPage() {
                             <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
                             <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                           </div>
-                          <span className="text-xs text-muted-foreground">AI正在思考...</span>
+                          <span className="text-xs text-muted-foreground">
+                            讯飞星火正在思考...
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -241,7 +243,7 @@ export default function AiPage() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              按 Enter 发送消息，Shift + Enter 换行
+              按 Enter 发送消息，Shift + Enter 换行 | 当前使用: 讯飞星火
             </p>
           </div>
         </motion.div>
