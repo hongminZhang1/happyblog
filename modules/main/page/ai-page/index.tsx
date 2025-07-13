@@ -142,111 +142,113 @@ export default function AiPage() {
   }
 
   return (
-    <MaxWidthWrapper className="py-4">
-      <motion.main
-        className="flex flex-col items-center gap-4 max-w-6xl mx-auto"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        style={{ height: 'calc(100vh - 4rem)' }}
-      >
-        {/* 标题部分 */}
-        <motion.div
-          className="text-center space-y-1 flex-shrink-0"
-          variants={chatVariants}
+    <div className="py-4 h-screen overflow-hidden">
+      <MaxWidthWrapper>
+        <motion.main
+          className="flex flex-col items-center gap-4 max-w-6xl mx-auto"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          style={{ height: 'calc(100vh - 8rem)' }}
         >
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-emerald-400 bg-clip-text text-transparent">
-            Talk to AI
-          </h1>
-        </motion.div>
+          {/* 标题部分 */}
+          <motion.div
+            className="text-center space-y-1 flex-shrink-0"
+            variants={chatVariants}
+          >
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-emerald-400 bg-clip-text text-transparent">
+              Talk to AI
+            </h1>
+          </motion.div>
 
-        {/* 聊天容器 */}
-        <motion.div
-          className="w-full bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden"
-          style={{ height: '75vh' }}
-          variants={chatVariants}
-        >
-          {/* 消息显示区域 */}
-          <div className="flex-1 overflow-hidden">
-            <div
-              className="overflow-y-auto chat-scroll-area"
-              ref={scrollAreaRef}
-              data-lenis-prevent
-              style={{
-                height: 'calc(75vh - 120px)', // 减去标题和输入框的高度
-                scrollBehavior: 'smooth',
-                scrollbarWidth: 'thin',
-                scrollbarColor: 'rgba(156, 163, 175, 0.4) transparent',
-              }}
-            >
-              <div className="p-4">
-                <div className="space-y-4">
-                  {messages.map(message => (
-                    <div
-                      key={message.id}
-                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
+          {/* 聊天容器 */}
+          <motion.div
+            className="w-full bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden"
+            style={{ height: '75vh' }}
+            variants={chatVariants}
+          >
+            {/* 消息显示区域 */}
+            <div className="flex-1 overflow-hidden">
+              <div
+                className="overflow-y-auto chat-scroll-area"
+                ref={scrollAreaRef}
+                data-lenis-prevent
+                style={{
+                  height: 'calc(75vh - 120px)', // 减去标题和输入框的高度
+                  scrollBehavior: 'smooth',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgba(156, 163, 175, 0.4) transparent',
+                }}
+              >
+                <div className="p-4">
+                  <div className="space-y-4">
+                    {messages.map(message => (
                       <div
-                        className={`max-w-[85%] px-4 py-3 rounded-lg ${
-                          message.role === 'user'
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-muted text-foreground'
-                        }`}
+                        key={message.id}
+                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
-                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* 加载状态 */}
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-muted px-4 py-3 rounded-lg">
-                        <div className="flex items-center space-x-2">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
-                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            讯飞星火正在思考...
-                          </span>
+                        <div
+                          className={`max-w-[85%] px-4 py-3 rounded-lg ${
+                            message.role === 'user'
+                              ? 'bg-purple-600 text-white'
+                              : 'bg-muted text-foreground'
+                          }`}
+                        >
+                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    ))}
 
-                  {/* 滚动到底部的参考点 - 不再需要 */}
+                    {/* 加载状态 */}
+                    {isLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-muted px-4 py-3 rounded-lg">
+                          <div className="flex items-center space-x-2">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
+                              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              讯飞星火正在思考...
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 滚动到底部的参考点 - 不再需要 */}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* 输入区域 - 固定在底部 */}
-          <div className="border-t p-4 flex-shrink-0 bg-background">
-            <div className="flex gap-2">
-              <Input
-                value={inputValue}
-                onChange={e => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="输入您的问题..."
-                className="flex-1"
-                disabled={isLoading}
-              />
-              <Button
-                onClick={handleSendMessage}
-                disabled={!inputValue.trim() || isLoading}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6"
-              >
-                发送
-              </Button>
+            {/* 输入区域 - 固定在底部 */}
+            <div className="border-t p-4 flex-shrink-0 bg-background">
+              <div className="flex gap-2">
+                <Input
+                  value={inputValue}
+                  onChange={e => setInputValue(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="输入您的问题..."
+                  className="flex-1"
+                  disabled={isLoading}
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!inputValue.trim() || isLoading}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+                >
+                  发送
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                按 Enter 发送消息，Shift + Enter 换行 | 当前使用: 讯飞星火
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              按 Enter 发送消息，Shift + Enter 换行 | 当前使用: 讯飞星火
-            </p>
-          </div>
-        </motion.div>
-      </motion.main>
-    </MaxWidthWrapper>
+          </motion.div>
+        </motion.main>
+      </MaxWidthWrapper>
+    </div>
   )
 }

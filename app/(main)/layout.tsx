@@ -28,7 +28,7 @@ export default function MainLayout({
       >
         <MainLayoutHeader />
 
-        <MaxWidthWrapper className="overflow-x-hidden flex flex-col justify-between flex-1 gap-2">
+        <MaxWidthWrapper className={`overflow-x-hidden flex flex-col ${isAiPage ? 'justify-start' : 'justify-between'} flex-1 gap-2`}>
           <main className="flex flex-col flex-1">{children}</main>
 
           {!isAiPage && (
