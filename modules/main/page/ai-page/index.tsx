@@ -1,10 +1,11 @@
 'use client'
 
-import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { customMarkdownTheme, processor } from '@/lib/markdown'
 import * as motion from 'motion/react-client'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const containerVariants = {
   hidden: { opacity: 0, y: 60 },
@@ -39,23 +40,130 @@ interface Message {
   timestamp: Date
 }
 
+interface AIModel {
+  id: string
+  name: string
+  description: string
+  apiEndpoint: string
+}
+
+// 可用的AI模型配置
+const AI_MODELS: AIModel[] = [
+  {
+    id: 'spark',
+    name: '讯飞星火',
+    description: '讯飞星火AI智能助手',
+    apiEndpoint: '/api/chat-spark',
+  },
+  // 将来可以在这里添加更多模型
+  // {
+  //   id: 'gpt',
+  //   name: 'ChatGPT',
+  //   description: 'OpenAI ChatGPT助手',
+  //   apiEndpoint: '/api/chat-gpt'
+  // }
+]
+
+// 根据模型生成初始消息的函数
+function generateWelcomeMessage(model: AIModel): Message {
+  return {
+    id: '1',
+    content: `您好！我是${model.description}，很高兴为您服务。请问有什么可以帮助您的吗？`,
+    role: 'assistant' as const,
+    timestamp: new Date(),
+  }
+}
+
+// 消息组件，支持markdown渲染
+function MessageComponent({
+  message,
+  renderMarkdown,
+}: {
+  message: Message
+  renderMarkdown: (content: string) => Promise<string>
+}) {
+  const [renderedContent, setRenderedContent] = useState<string>('')
+  const [isRendering, setIsRendering] = useState(false)
+
+  useEffect(() => {
+    if (message.role === 'assistant') {
+      const renderContent = async () => {
+        setIsRendering(true)
+        try {
+          const content = await renderMarkdown(message.content)
+          setRenderedContent(content)
+        }
+        finally {
+          setIsRendering(false)
+        }
+      }
+      renderContent()
+    }
+  }, [message.content, message.role, renderMarkdown])
+
+  return (
+    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+      <div
+        className={`max-w-[85%] px-4 py-3 rounded-lg ${
+          message.role === 'user'
+            ? 'bg-purple-600 text-white'
+            : 'bg-muted text-foreground'
+        }`}
+      >
+        {message.role === 'user'
+          ? (
+              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+            )
+          : (
+              <div className="text-sm">
+                {isRendering
+                  ? (
+                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    )
+                  : (
+                      <div
+                        className={`${customMarkdownTheme} !prose-sm [&>*]:!text-sm [&_h1]:!text-lg [&_h2]:!text-base [&_h3]:!text-sm [&_h4]:!text-sm [&_h5]:!text-xs [&_h6]:!text-xs`}
+                        dangerouslySetInnerHTML={{ __html: renderedContent || message.content }}
+                      />
+                    )}
+              </div>
+            )}
+      </div>
+    </div>
+  )
+}
+
 export default function AiPage() {
-  const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedModel, setSelectedModel] = useState<string>('spark')
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
-  // 客户端挂载后初始化消息，避免水合错误
-  useEffect(() => {
-    setMessages([
-      {
-        id: '1',
-        content: '您好！我是讯飞星火AI智能助手，很高兴为您服务。请问有什么可以帮助您的吗？',
-        role: 'assistant',
-        timestamp: new Date(),
-      },
-    ])
-  }, [])
+  // 获取当前选择的模型信息
+  const currentModel = AI_MODELS.find(model => model.id === selectedModel) || AI_MODELS[0]
+
+  // 用户消息状态
+  const [userMessages, setUserMessages] = useState<Message[]>([])
+
+  // 使用useMemo计算消息列表，包含欢迎消息
+  const messages = useMemo(() => {
+    const welcomeMessage = generateWelcomeMessage(currentModel)
+    return [welcomeMessage, ...userMessages]
+  }, [currentModel, userMessages])
+
+  // 渲染markdown内容
+  const renderMarkdown = async (content: string) => {
+    try {
+      const result = await processor.process(content)
+      return result.toString()
+    }
+    catch (error) {
+      console.error('Markdown渲染错误:', error)
+      return content // 如果渲染失败，返回原始内容
+    }
+  }
+
+  // 模型切换时自动清除消息 - 在切换函数中处理
 
   // 自动滚动到底部
   const scrollToBottom = () => {
@@ -67,7 +175,8 @@ export default function AiPage() {
   // 当消息更新时自动滚动到底部
   useEffect(() => {
     // 使用setTimeout确保DOM更新后再滚动
-    setTimeout(scrollToBottom, 100)
+    const timer = setTimeout(scrollToBottom, 100)
+    return () => clearTimeout(timer)
   }, [messages])
 
   const handleSendMessage = async () => {
@@ -81,13 +190,13 @@ export default function AiPage() {
       timestamp: new Date(),
     }
 
-    setMessages(prev => [...prev, userMessage])
+    setUserMessages(prev => [...prev, userMessage])
     setInputValue('')
     setIsLoading(true)
 
     try {
-      // 使用讯飞星火API
-      const response = await fetch('/api/chat-spark', {
+      // 使用当前选择的模型API
+      const response = await fetch(currentModel.apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,6 +206,7 @@ export default function AiPage() {
             role: msg.role,
             content: msg.content,
           })),
+          model: selectedModel, // 传递模型ID以便后端处理
         }),
       })
 
@@ -114,7 +224,7 @@ export default function AiPage() {
         timestamp: new Date(),
       }
 
-      setMessages(prev => [...prev, aiMessage])
+      setUserMessages(prev => [...prev, aiMessage])
     }
     catch (error) {
       console.error('AI聊天错误:', error)
@@ -127,7 +237,7 @@ export default function AiPage() {
         timestamp: new Date(),
       }
 
-      setMessages(prev => [...prev, errorMessage])
+      setUserMessages(prev => [...prev, errorMessage])
     }
     finally {
       setIsLoading(false)
@@ -141,133 +251,120 @@ export default function AiPage() {
     }
   }
 
-  const handleClearMessages = () => {
-    setMessages([
-      {
-        id: '1',
-        content: '您好！我是讯飞星火AI智能助手，很高兴为您服务。请问有什么可以帮助您的吗？',
-        role: 'assistant',
-        timestamp: new Date(),
-      },
-    ])
+  const handleClearMessages = useCallback(() => {
+    setUserMessages([]) // 清空用户消息，欢迎消息会自动显示
+  }, [])
+
+  // 处理模型切换
+  const handleModelChange = (modelId: string) => {
+    setSelectedModel(modelId)
+    setUserMessages([]) // 切换模型时清空用户消息
   }
 
   return (
-    <div className="py-4 h-screen overflow-hidden">
-      <MaxWidthWrapper>
-        <motion.main
-          className="flex flex-col items-center gap-4 max-w-6xl mx-auto"
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-          style={{ height: 'calc(100vh - 8rem)' }}
-        >
-          {/* 标题部分 */}
-          <motion.div
-            className="text-center space-y-1 flex-shrink-0"
-            variants={chatVariants}
+    <motion.main
+      className="flex flex-col items-center justify-center gap-4 py-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      {/* 聊天容器 */}
+      <motion.div
+        className="w-full max-w-6xl bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden"
+        style={{ height: '75vh' }}
+        variants={chatVariants}
+      >
+        {/* 消息显示区域 */}
+        <div className="flex-1 overflow-hidden">
+          <div
+            className="overflow-y-auto chat-scroll-area"
+            ref={scrollAreaRef}
+            data-lenis-prevent
+            style={{
+              height: 'calc(70vh - 120px)', // 减去标题和输入框的高度
+              scrollBehavior: 'smooth',
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(156, 163, 175, 0.4) transparent',
+            }}
           >
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-emerald-400 bg-clip-text text-transparent">
-              Talk to AI
-            </h1>
-          </motion.div>
+            <div className="p-4">
+              <div className="space-y-4">
+                {messages.map(message => (
+                  <MessageComponent key={message.id} message={message} renderMarkdown={renderMarkdown} />
+                ))}
 
-          {/* 聊天容器 */}
-          <motion.div
-            className="w-full bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden"
-            style={{ height: '75vh' }}
-            variants={chatVariants}
-          >
-            {/* 消息显示区域 */}
-            <div className="flex-1 overflow-hidden">
-              <div
-                className="overflow-y-auto chat-scroll-area"
-                ref={scrollAreaRef}
-                data-lenis-prevent
-                style={{
-                  height: 'calc(75vh - 120px)', // 减去标题和输入框的高度
-                  scrollBehavior: 'smooth',
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: 'rgba(156, 163, 175, 0.4) transparent',
-                }}
-              >
-                <div className="p-4">
-                  <div className="space-y-4">
-                    {messages.map(message => (
-                      <div
-                        key={message.id}
-                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div
-                          className={`max-w-[85%] px-4 py-3 rounded-lg ${
-                            message.role === 'user'
-                              ? 'bg-purple-600 text-white'
-                              : 'bg-muted text-foreground'
-                          }`}
-                        >
-                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                {/* 加载状态 */}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted px-4 py-3 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                         </div>
+                        <span className="text-xs text-muted-foreground">
+                          讯飞星火正在思考...
+                        </span>
                       </div>
-                    ))}
-
-                    {/* 加载状态 */}
-                    {isLoading && (
-                      <div className="flex justify-start">
-                        <div className="bg-muted px-4 py-3 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <div className="flex space-x-1">
-                              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
-                              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                            </div>
-                            <span className="text-xs text-muted-foreground">
-                              讯飞星火正在思考...
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 滚动到底部的参考点 - 不再需要 */}
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
+                )}
 
-            {/* 输入区域 - 固定在底部 */}
-            <div className="border-t p-4 flex-shrink-0 bg-background">
-              <div className="flex gap-2">
-                <Input
-                  value={inputValue}
-                  onChange={e => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="输入您的问题..."
-                  className="flex-1"
-                  disabled={isLoading}
-                />
-                <Button
-                  onClick={handleClearMessages}
-                  disabled={isLoading}
-                  variant="outline"
-                  className="px-4"
-                >
-                  清空
-                </Button>
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={!inputValue.trim() || isLoading}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-6"
-                >
-                  发送
-                </Button>
+                {/* 滚动到底部的参考点 - 不再需要 */}
               </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                按 Enter 发送消息，Shift + Enter 换行 | 当前使用: 讯飞星火
-              </p>
             </div>
-          </motion.div>
-        </motion.main>
-      </MaxWidthWrapper>
-    </div>
+          </div>
+        </div>
+
+        {/* 输入区域 - 固定在底部 */}
+        <div className="border-t p-4 flex-shrink-0 bg-background">
+          <div className="flex gap-2">
+            {/* 模型选择器 */}
+            <Select value={selectedModel} onValueChange={handleModelChange} disabled={isLoading}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {AI_MODELS.map(model => (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Input
+              value={inputValue}
+              onChange={e => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="输入您的问题..."
+              className="flex-1"
+              disabled={isLoading}
+            />
+            <Button
+              onClick={handleClearMessages}
+              disabled={isLoading}
+              variant="outline"
+              className="px-4"
+            >
+              清空
+            </Button>
+            <Button
+              onClick={handleSendMessage}
+              disabled={!inputValue.trim() || isLoading}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+            >
+              发送
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            按 Enter 发送消息，Shift + Enter 换行 | 当前使用:
+            {' '}
+            {currentModel.name}
+          </p>
+        </div>
+      </motion.div>
+    </motion.main>
   )
 }
