@@ -74,7 +74,7 @@ export default function HomeSearchSection() {
             <Button
               onClick={handleSearch}
               disabled={!query.trim()}
-              className="h-10 w-10 p-0 bg-blue-400 hover:bg-blue-500 dark:bg-emerald-600 dark:hover:bg-emerald-700"
+              className="h-10 w-10 p-0 bg-blue-400 hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-600"
               size="icon"
             >
               <Search className="w-4 h-4" />
