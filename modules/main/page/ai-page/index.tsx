@@ -51,8 +51,8 @@ interface AIModel {
 const AI_MODELS: AIModel[] = [
   {
     id: 'spark',
-    name: '讯飞星火',
-    description: '讯飞星火AI智能助手',
+    name: 'Spark',
+    description: 'SparkAI智能助手',
     apiEndpoint: '/api/chat-spark',
   },
   // 将来可以在这里添加更多模型
@@ -322,7 +322,7 @@ export default function AiPage() {
           <div className="flex gap-2">
             {/* 模型选择器 */}
             <Select value={selectedModel} onValueChange={handleModelChange} disabled={isLoading}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-22">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -338,7 +338,7 @@ export default function AiPage() {
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="输入您的问题..."
+              placeholder="input here"
               className="flex-1"
               disabled={isLoading}
             />
@@ -346,23 +346,23 @@ export default function AiPage() {
               onClick={handleClearMessages}
               disabled={isLoading}
               variant="outline"
-              className="px-4"
+              className="px-3"
             >
-              清空
+              Clear
             </Button>
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-3"
             >
-              发送
+              Send
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-2 text-center">
+          {/* <p className="text-xs text-muted-foreground mt-2 text-center">
             按 Enter 发送消息，Shift + Enter 换行 | 当前使用:
             {' '}
             {currentModel.name}
-          </p>
+          </p> */}
         </div>
       </motion.div>
     </motion.main>
