@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
                       controller.enqueue(encoder.encode(`data: ${streamData}\n\n`))
                     }
                   }
-                  catch (e) {
+                  catch {
                     // 忽略解析错误
                   }
                 }
