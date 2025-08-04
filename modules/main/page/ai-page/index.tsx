@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { customMarkdownTheme, processor } from '@/lib/markdown'
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, Send, Trash2 } from 'lucide-react'
 import * as motion from 'motion/react-client'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -88,7 +88,7 @@ function MessageComponent({
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    if (message.role === 'assistant') {
+    if (message.role === 'assistant' && message.content) {
       const renderContent = async () => {
         setIsRendering(true)
         try {
@@ -99,7 +99,10 @@ function MessageComponent({
           setIsRendering(false)
         }
       }
-      renderContent()
+
+      // 为了流式响应，添加防抖以避免频繁渲染
+      const timeoutId = setTimeout(renderContent, 50)
+      return () => clearTimeout(timeoutId)
     }
   }, [message.content, message.role, renderMarkdown])
 
@@ -135,7 +138,7 @@ function MessageComponent({
                     )
                   : (
                       <div
-                        className={`${customMarkdownTheme} !prose-sm [&>*]:!text-sm [&_h1]:!text-lg [&_h2]:!text-base [&_h3]:!text-sm [&_h4]:!text-sm [&_h5]:!text-xs [&_h6]:!text-xs`}
+                        className={`${customMarkdownTheme} !prose-sm [&>*]:!text-sm [&_h1]:!text-lg [&_h2]:!text-base [&_h3]:!text-sm [&_h4]:!text-sm [&_h5]:!text-xs [&_h6]:!text-xs [&_pre]:!text-xs md:[&_pre]:!text-sm [&_code]:!text-xs md:[&_code]:!text-sm [&_pre_code]:!text-xs md:[&_pre_code]:!text-sm`}
                         dangerouslySetInnerHTML={{ __html: renderedContent || message.content }}
                       />
                     )}
@@ -223,8 +226,19 @@ export default function AiPage() {
     setInputValue('')
     setIsLoading(true)
 
+    // 创建一个空的AI消息，用于流式更新
+    const aiMessageId = (Date.now() + 1).toString()
+    const initialAiMessage: Message = {
+      id: aiMessageId,
+      content: '',
+      role: 'assistant',
+      timestamp: new Date(),
+    }
+
+    setUserMessages(prev => [...prev, initialAiMessage])
+
     try {
-      // 使用当前选择的模型API
+      // 使用流式响应
       const response = await fetch(currentModel.apiEndpoint, {
         method: 'POST',
         headers: {
@@ -235,7 +249,8 @@ export default function AiPage() {
             role: msg.role,
             content: msg.content,
           })),
-          model: selectedModel, // 传递模型ID以便后端处理
+          model: selectedModel,
+          stream: true, // 启用流式响应
         }),
       })
 
@@ -244,29 +259,65 @@ export default function AiPage() {
         throw new Error(errorData.error || '请求失败')
       }
 
-      const data = await response.json()
-
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: data.content,
-        role: 'assistant',
-        timestamp: new Date(),
+      // 处理流式响应
+      const reader = response.body?.getReader()
+      if (!reader) {
+        throw new Error('无法获取响应流')
       }
 
-      setUserMessages(prev => [...prev, aiMessage])
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done)
+          break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || '' // 保留不完整的行
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6)
+            if (data === '[DONE]') {
+              setIsLoading(false)
+              return
+            }
+
+            try {
+              const parsed = JSON.parse(data)
+              if (parsed.content) {
+                // 实时更新AI消息内容
+                setUserMessages(prev =>
+                  prev.map(msg =>
+                    msg.id === aiMessageId
+                      ? { ...msg, content: msg.content + parsed.content }
+                      : msg,
+                  ),
+                )
+              }
+            }
+            catch {
+              // 忽略解析错误
+            }
+          }
+        }
+      }
     }
     catch (error) {
       console.error('AI聊天错误:', error)
 
-      // 显示错误消息
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: `抱歉，遇到了错误: ${error instanceof Error ? error.message : '未知错误'}。请检查API配置或稍后重试。`,
-        role: 'assistant',
-        timestamp: new Date(),
-      }
+      // 更新AI消息为错误消息
+      const errorContent = `抱歉，遇到了错误: ${error instanceof Error ? error.message : '未知错误'}。请检查API配置或稍后重试。`
 
-      setUserMessages(prev => [...prev, errorMessage])
+      setUserMessages(prev =>
+        prev.map(msg =>
+          msg.id === aiMessageId
+            ? { ...msg, content: errorContent }
+            : msg,
+        ),
+      )
     }
     finally {
       setIsLoading(false)
@@ -322,8 +373,8 @@ export default function AiPage() {
                   <MessageComponent key={message.id} message={message} renderMarkdown={renderMarkdown} />
                 ))}
 
-                {/* 加载状态 */}
-                {isLoading && (
+                {/* 加载状态 - 只在初始加载时显示 */}
+                {isLoading && messages.length > 0 && messages[messages.length - 1].role === 'user' && (
                   <div className="flex justify-start">
                     <div className="bg-muted px-4 py-3 rounded-lg">
                       <div className="flex items-center space-x-2">
@@ -374,16 +425,18 @@ export default function AiPage() {
               onClick={handleClearMessages}
               disabled={isLoading}
               variant="outline"
-              className="px-2 md:px-4"
+              size="icon"
+              className="h-9 w-9"
             >
-              cls
+              <Trash2 className="h-4 w-4" />
             </Button>
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-2 md:px-4"
+              className="bg-purple-600 hover:bg-purple-700 text-white h-9 w-9"
+              size="icon"
             >
-              Send
+              <Send className="h-4 w-4" />
             </Button>
           </div>
           {/* <p className="text-xs text-muted-foreground mt-2 text-center">
