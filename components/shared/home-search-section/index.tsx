@@ -49,14 +49,14 @@ export default function HomeSearchSection() {
             {/* <p className="text-sm text-muted-foreground">探索博客文章和学习笔记</p> */}
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-1">
             <div className="flex-1">
               <Input
-                placeholder="关键词"
+                placeholder="input keyword"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="h-10"
+                className="h-9"
               />
             </div>
 
@@ -65,16 +65,16 @@ export default function HomeSearchSection() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
-                <SelectItem value="blog">博客</SelectItem>
-                <SelectItem value="note">笔记</SelectItem>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="blog">Blog</SelectItem>
+                <SelectItem value="note">Note</SelectItem>
               </SelectContent>
             </Select>
 
             <Button
               onClick={handleSearch}
               disabled={!query.trim()}
-              className="h-10 w-10 p-0 bg-blue-400 hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-600"
+              className="h-9 w-9 p-0 bg-blue-400 hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-600"
               size="icon"
             >
               <Search className="w-4 h-4" />

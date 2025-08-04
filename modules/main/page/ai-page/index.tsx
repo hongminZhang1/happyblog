@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { customMarkdownTheme, processor } from '@/lib/markdown'
+import { Check, Copy } from 'lucide-react'
 import * as motion from 'motion/react-client'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -84,6 +85,7 @@ function MessageComponent({
 }) {
   const [renderedContent, setRenderedContent] = useState<string>('')
   const [isRendering, setIsRendering] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (message.role === 'assistant') {
@@ -101,10 +103,21 @@ function MessageComponent({
     }
   }, [message.content, message.role, renderMarkdown])
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000) // 2秒后重置状态
+    }
+    catch (error) {
+      console.error('复制失败:', error)
+    }
+  }
+
   return (
     <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
       <div
-        className={`max-w-[85%] px-4 py-3 rounded-lg ${
+        className={`max-w-[100%] px-4 py-3 rounded-lg relative group ${
           message.role === 'user'
             ? 'bg-purple-600 text-white'
             : 'bg-muted text-foreground'
@@ -126,6 +139,22 @@ function MessageComponent({
                         dangerouslySetInnerHTML={{ __html: renderedContent || message.content }}
                       />
                     )}
+
+                {/* 复制按钮 - 只在AI回答时显示 */}
+                <Button
+                  onClick={handleCopy}
+                  size="icon"
+                  variant="ghost"
+                  className="absolute bottom-2 right-2 h-6 w-6 rounded-full bg-background/80 hover:bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  {copied
+                    ? (
+                        <Check className="h-3 w-3 text-green-600" />
+                      )
+                    : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                </Button>
               </div>
             )}
       </div>
@@ -271,7 +300,7 @@ export default function AiPage() {
       {/* 聊天容器 */}
       <motion.div
         className="w-full max-w-6xl bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden"
-        style={{ height: '75vh' }}
+        style={{ height: '80vh' }}
         variants={chatVariants}
       >
         {/* 消息显示区域 */}
@@ -281,7 +310,7 @@ export default function AiPage() {
             ref={scrollAreaRef}
             data-lenis-prevent
             style={{
-              height: 'calc(70vh - 120px)', // 减去标题和输入框的高度
+              height: 'calc(70vh)', // 减去标题和输入框的高度
               scrollBehavior: 'smooth',
               scrollbarWidth: 'thin',
               scrollbarColor: 'rgba(156, 163, 175, 0.4) transparent',
@@ -304,14 +333,13 @@ export default function AiPage() {
                           <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                         </div>
                         <span className="text-xs text-muted-foreground">
-                          讯飞星火正在思考...
+                          正在思考...
                         </span>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* 滚动到底部的参考点 - 不再需要 */}
               </div>
             </div>
           </div>
@@ -346,14 +374,14 @@ export default function AiPage() {
               onClick={handleClearMessages}
               disabled={isLoading}
               variant="outline"
-              className="px-3"
+              className="px-2 md:px-4"
             >
-              Clear
+              cls
             </Button>
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-3"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-2 md:px-4"
             >
               Send
             </Button>
