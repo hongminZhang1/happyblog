@@ -170,6 +170,12 @@ export default function AiPage() {
   const [selectedModel, setSelectedModel] = useState<string>('spark')
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
+  // 密码验证状态
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [authError, setAuthError] = useState('')
+  const [isAuthLoading, setIsAuthLoading] = useState(false)
+
   // 获取当前选择的模型信息
   const currentModel = AI_MODELS.find(model => model.id === selectedModel) || AI_MODELS[0]
 
@@ -338,6 +344,89 @@ export default function AiPage() {
   const handleModelChange = (modelId: string) => {
     setSelectedModel(modelId)
     setUserMessages([]) // 切换模型时清空用户消息
+  }
+
+  // 密码验证函数
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!password.trim())
+      return
+
+    setIsAuthLoading(true)
+    setAuthError('')
+
+    try {
+      const response = await fetch('/api/ai-auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setIsAuthenticated(true)
+        setPassword('')
+      }
+      else {
+        setAuthError(data.error || '密码错误')
+      }
+    }
+    catch {
+      setAuthError('验证失败，请重试')
+    }
+    finally {
+      setIsAuthLoading(false)
+    }
+  }
+
+  // 如果未认证，显示密码输入界面
+  if (!isAuthenticated) {
+    return (
+      <motion.main
+        className="flex flex-col items-center justify-center gap-4 py-2"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <motion.div
+          className="w-full max-w-md bg-card border rounded-lg shadow-lg p-6"
+          variants={chatVariants}
+        >
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold mb-2">AI助手访问</h2>
+            <p className="text-muted-foreground">请输入访问密码</p>
+          </div>
+
+          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+            <div>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="请输入密码"
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                disabled={isAuthLoading}
+              />
+            </div>
+
+            {authError && (
+              <p className="text-sm text-red-600 text-center">{authError}</p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+              disabled={isAuthLoading || !password.trim()}
+            >
+              {isAuthLoading ? '验证中...' : '进入AI助手'}
+            </Button>
+          </form>
+        </motion.div>
+      </motion.main>
+    )
   }
 
   return (
