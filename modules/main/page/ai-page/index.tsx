@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { customMarkdownTheme, processor } from '@/lib/markdown'
 import { Check, Copy, Send, Trash2 } from 'lucide-react'
@@ -343,7 +342,7 @@ export default function AiPage() {
 
   return (
     <motion.main
-      className="flex flex-col items-center justify-center gap-4 py-6"
+      className="flex flex-col items-center justify-center gap-4 py-2"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -351,7 +350,7 @@ export default function AiPage() {
       {/* 聊天容器 */}
       <motion.div
         className="w-full max-w-6xl bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden"
-        style={{ height: '80vh' }}
+        style={{ height: '85vh' }}
         variants={chatVariants}
       >
         {/* 消息显示区域 */}
@@ -361,7 +360,7 @@ export default function AiPage() {
             ref={scrollAreaRef}
             data-lenis-prevent
             style={{
-              height: 'calc(70vh)', // 减去标题和输入框的高度
+              height: 'calc(65vh)', // 减去标题和输入框的高度
               scrollBehavior: 'smooth',
               scrollbarWidth: 'thin',
               scrollbarColor: 'rgba(156, 163, 175, 0.4) transparent',
@@ -398,42 +397,54 @@ export default function AiPage() {
 
         {/* 输入区域 - 固定在底部 */}
         <div className="border-t p-4 flex-shrink-0 bg-background">
-          <div className="flex gap-2">
-            {/* 模型选择器 */}
-            <Select value={selectedModel} onValueChange={handleModelChange} disabled={isLoading}>
-              <SelectTrigger className="w-22">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {AI_MODELS.map(model => (
-                  <SelectItem key={model.id} value={model.id}>
-                    {model.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Input
+          {/* 输入框区域 */}
+          <div className="mb-1">
+            <textarea
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="input here"
-              className="flex-1"
+              placeholder="输入任何问题..."
+              className="w-full min-h-[80px] max-h-[200px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={isLoading}
+              rows={3}
             />
-            <Button
-              onClick={handleClearMessages}
-              disabled={isLoading}
-              variant="outline"
-              size="icon"
-              className="h-9 w-9"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+          </div>
+
+          {/* 按钮控制区域 */}
+          <div className="flex items-center justify-between">
+            {/* 左侧按钮组 */}
+            <div className="flex items-center gap-2">
+              {/* 模型选择器 */}
+              <Select value={selectedModel} onValueChange={handleModelChange} disabled={isLoading}>
+                <SelectTrigger className="w-22">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {AI_MODELS.map(model => (
+                    <SelectItem key={model.id} value={model.id}>
+                      {model.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* 清空按钮 */}
+              <Button
+                onClick={handleClearMessages}
+                disabled={isLoading}
+                variant="outline"
+                size="icon"
+                className="h-9 w-9"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* 右侧发送按钮 */}
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
-              className="bg-purple-600 hover:bg-purple-700 text-white h-9 w-9"
+              className="bg-purple-600 hover:bg-purple-700 text-white h-9 w-9 rounded-full"
               size="icon"
             >
               <Send className="h-4 w-4" />
