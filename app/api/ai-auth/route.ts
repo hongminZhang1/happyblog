@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       )
     }
   }
-  catch (error) {
+  catch {
     return NextResponse.json(
       { error: '请求格式错误' },
       { status: 400 },
