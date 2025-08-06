@@ -6,6 +6,7 @@ import HorizontalDividingLine from '@/components/shared/horizontal-dividing-line
 import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import StarsBackground from '@/components/shared/stars-background'
 import StartUpMotion from '@/components/shared/start-up-motion'
+import { Toaster } from '@/components/ui/sonner'
 import MainLayoutHeader from '@/modules/main/layout/main-layout-header'
 import { usePathname } from 'next/navigation'
 // import FloatingSearchButton from '@/components/shared/floating-search-button'
@@ -45,6 +46,8 @@ export default function MainLayout({
 
       {/* 浮动搜索按钮 - 可选功能 */}
       {/* <FloatingSearchButton /> */}
+
+      <Toaster position="top-center" richColors duration={2000} />
     </LenisScrollProvider>
   )
 }
