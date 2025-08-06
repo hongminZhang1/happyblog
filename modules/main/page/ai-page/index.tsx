@@ -424,6 +424,9 @@ export default function AiPage() {
               {isAuthLoading ? '验证中...' : '进入AI助手'}
             </Button>
           </form>
+          <div className="text-center mb-2">
+            <p className="text-muted-foreground">密码: 123456 状态: 公开</p>
+          </div>
         </motion.div>
       </motion.main>
     )
