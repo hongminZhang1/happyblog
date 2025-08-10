@@ -75,7 +75,7 @@ const AI_MODELS: AIModel[] = [
 // 根据模型生成初始消息的函数
 function generateWelcomeMessage(model: AIModel): Message {
   return {
-    id: '1',
+    id: `welcome-${model.id}`,
     content: `您好！我是${model.description}，很高兴为您服务。请问有什么可以帮助您的吗？`,
     role: 'assistant' as const,
     timestamp: new Date(),
@@ -262,8 +262,6 @@ export default function AiPage() {
       return content // 如果渲染失败，返回原始内容
     }
   }
-
-  // 模型切换时自动清除消息 - 在切换函数中处理
 
   // 自动滚动到底部
   const scrollToBottom = () => {
