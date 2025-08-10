@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { customMarkdownTheme, processor } from '@/lib/markdown'
-import { Check, Copy, FileText, Send, Trash2, Upload, X } from 'lucide-react'
+import { Check, Copy, FileText, Send, Trash2, X } from 'lucide-react'
 import * as motion from 'motion/react-client'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -64,13 +64,12 @@ const AI_MODELS: AIModel[] = [
     description: 'SparkAI智能助手',
     apiEndpoint: '/api/chat-spark',
   },
-  // 将来可以在这里添加更多模型
-  // {
-  //   id: 'gpt',
-  //   name: 'ChatGPT',
-  //   description: 'OpenAI ChatGPT助手',
-  //   apiEndpoint: '/api/chat-gpt'
-  // }
+  {
+    id: 'gpt-4.1-mini',
+    name: 'GPT-4.1-mini',
+    description: 'GPT-4.1-mini智能助手',
+    apiEndpoint: '/api/chat-gpt',
+  },
 ]
 
 // 根据模型生成初始消息的函数
@@ -83,36 +82,69 @@ function generateWelcomeMessage(model: AIModel): Message {
   }
 }
 
+// 检查代码块是否完整
+function isCodeBlockComplete(content: string): boolean {
+  const codeBlockMatches = content.match(/```/g)
+  return !codeBlockMatches || codeBlockMatches.length % 2 === 0
+}
+
 // 消息组件，支持markdown渲染
 function MessageComponent({
   message,
   renderMarkdown,
+  isStreaming = false,
 }: {
   message: Message
   renderMarkdown: (content: string) => Promise<string>
+  isStreaming?: boolean
 }) {
   const [renderedContent, setRenderedContent] = useState<string>('')
   const [isRendering, setIsRendering] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [hasRenderedFinal, setHasRenderedFinal] = useState(false)
 
   useEffect(() => {
     if (message.role === 'assistant' && message.content) {
-      const renderContent = async () => {
+      const renderContent = async (isFinalRender = false) => {
         setIsRendering(true)
         try {
           const content = await renderMarkdown(message.content)
           setRenderedContent(content)
+
+          if (isFinalRender) {
+            setHasRenderedFinal(true)
+          }
+        }
+        catch (error) {
+          console.error('Markdown渲染错误:', error)
+          setRenderedContent('')
         }
         finally {
           setIsRendering(false)
         }
       }
 
-      // 为了流式响应，添加防抖以避免频繁渲染
-      const timeoutId = setTimeout(renderContent, 50)
-      return () => clearTimeout(timeoutId)
+      // 如果流式响应已结束且还没有进行最终渲染，立即进行最终渲染
+      if (!isStreaming && !hasRenderedFinal) {
+        const timeoutId = setTimeout(() => renderContent(true), 100)
+        return () => clearTimeout(timeoutId)
+      }
+
+      // 如果正在流式响应，使用更保守的策略
+      if (isStreaming) {
+        const hasCodeBlock = message.content.includes('```')
+        const isComplete = isCodeBlockComplete(message.content)
+
+        let debounceTime = 300 // 流式响应时增加延迟，减少中间渲染
+        if (hasCodeBlock && !isComplete) {
+          debounceTime = 1000 // 不完整代码块等待更长时间
+        }
+
+        const timeoutId = setTimeout(() => renderContent(false), debounceTime)
+        return () => clearTimeout(timeoutId)
+      }
     }
-  }, [message.content, message.role, renderMarkdown])
+  }, [message.content, message.role, renderMarkdown, isStreaming, hasRenderedFinal])
 
   const handleCopy = async () => {
     try {
@@ -140,14 +172,28 @@ function MessageComponent({
             )
           : (
               <div className="text-sm">
-                {isRendering
+                {isRendering || !renderedContent
                   ? (
-                      <p className="whitespace-pre-wrap">{message.content}</p>
+                      <div className="whitespace-pre-wrap">
+                        {/* 在渲染过程中，智能显示内容 */}
+                        {message.content.includes('```') && !isCodeBlockComplete(message.content)
+                          ? (
+                              <div>
+                                <p>{message.content}</p>
+                                <div className="text-xs text-muted-foreground mt-1 italic">
+                                  正在接收代码块...
+                                </div>
+                              </div>
+                            )
+                          : (
+                              <p>{message.content}</p>
+                            )}
+                      </div>
                     )
                   : (
                       <div
                         className={`${customMarkdownTheme} !prose-sm [&>*]:!text-sm [&_h1]:!text-lg [&_h2]:!text-base [&_h3]:!text-sm [&_h4]:!text-sm [&_h5]:!text-xs [&_h6]:!text-xs [&_pre]:!text-xs md:[&_pre]:!text-sm [&_code]:!text-xs md:[&_code]:!text-sm [&_pre_code]:!text-xs md:[&_pre_code]:!text-sm`}
-                        dangerouslySetInnerHTML={{ __html: renderedContent || message.content }}
+                        dangerouslySetInnerHTML={{ __html: renderedContent }}
                       />
                     )}
 
@@ -178,6 +224,9 @@ export default function AiPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedModel, setSelectedModel] = useState<string>('spark')
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+  // 跟踪当前正在流式响应的消息ID
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null)
 
   // 密码验证状态
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -286,6 +335,7 @@ export default function AiPage() {
       }
 
       setUserMessages(prev => [...prev, initialAiMessage])
+      setStreamingMessageId(aiMessageId) // 标记开始流式响应
 
       try {
         // 使用流式响应
@@ -300,7 +350,7 @@ export default function AiPage() {
               content: msg.content,
             })),
             model: selectedModel,
-            stream: true, // 启用流式响应
+            stream: false, // 禁用流式响应
           }),
         })
 
@@ -332,6 +382,7 @@ export default function AiPage() {
               const data = line.slice(6)
               if (data === '[DONE]') {
                 setIsLoading(false)
+                setStreamingMessageId(null) // 清除流式响应标记
                 return
               }
 
@@ -371,6 +422,7 @@ export default function AiPage() {
       }
       finally {
         setIsLoading(false)
+        setStreamingMessageId(null) // 确保清除流式响应标记
       }
 
       return
@@ -398,6 +450,7 @@ export default function AiPage() {
     }
 
     setUserMessages(prev => [...prev, initialAiMessage])
+    setStreamingMessageId(aiMessageId) // 标记开始流式响应
 
     try {
       // 使用流式响应
@@ -444,6 +497,7 @@ export default function AiPage() {
             const data = line.slice(6)
             if (data === '[DONE]') {
               setIsLoading(false)
+              setStreamingMessageId(null) // 清除流式响应标记
               return
             }
 
@@ -483,6 +537,7 @@ export default function AiPage() {
     }
     finally {
       setIsLoading(false)
+      setStreamingMessageId(null) // 确保清除流式响应标记
     }
   }
 
@@ -742,7 +797,12 @@ export default function AiPage() {
             <div className="p-4">
               <div className="space-y-4">
                 {messages.map(message => (
-                  <MessageComponent key={message.id} message={message} renderMarkdown={renderMarkdown} />
+                  <MessageComponent
+                    key={message.id}
+                    message={message}
+                    renderMarkdown={renderMarkdown}
+                    isStreaming={streamingMessageId === message.id}
+                  />
                 ))}
 
                 {/* 加载状态 - 只在初始加载时显示 */}
