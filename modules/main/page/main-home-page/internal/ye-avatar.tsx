@@ -1,12 +1,16 @@
 'use client'
 
-import avatar from '@/config/img/avatar.jpg'
+import avatar1 from '@/config/img/mn1.png'
+import avatar2 from '@/config/img/mn2.jpg'
 import { useTransitionTheme } from '@/hooks/use-transition-theme'
 import { motion } from 'motion/react'
 import Image from 'next/image'
 
 export default function YeAvatar() {
-  const { setTransitionTheme, theme } = useTransitionTheme()
+  const { setTransitionTheme, theme, resolvedTheme } = useTransitionTheme()
+
+  const effectiveTheme = resolvedTheme ?? theme
+  const avatarSrc = effectiveTheme === 'light' ? avatar1 : avatar2
 
   return (
     // 摸摸头~
@@ -22,18 +26,20 @@ export default function YeAvatar() {
       dragElastic={0.2}
     >
       <Image
-        src={avatar}
+        key={effectiveTheme}
+        src={avatarSrc}
         alt="avatar"
         className="rounded-full md:w-52 w-44"
         placeholder="blur"
         priority
       />
       {/* 亮模式宽度为 2, 暗模式宽度为 4, 视觉效果 */}
+      {/* 外圈视觉效果（无动画） */}
       <span
         className="absolute left-0 top-0 size-full rounded-full
                     ring-2 dark:ring-4
                   ring-pink-600 dark:ring-blue-800
-                    ring-offset-1 animate-ye-ping-one-dot-one"
+                    ring-offset-1"
       />
     </motion.figure>
   )
