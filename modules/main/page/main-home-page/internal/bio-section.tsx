@@ -7,7 +7,7 @@ export default function BioSection() {
         的博客空间
       </p>
         <small className="text-xs md:text-sm">
-          话说敲两下头像可以切换主题来着
+          双击头像切换主题喵~
         {' '}
         <span className="text-fuchsia-500">( ´◔ ‸◔`)</span>
       </small>

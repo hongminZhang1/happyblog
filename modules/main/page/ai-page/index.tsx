@@ -608,9 +608,9 @@ export default function AiPage() {
 
     for (const file of fileArray) {
       try {
-        // 检查文件大小（限制为20KB）
-        if (file.size > 20 * 1024) {
-          toast.error(`${file.name} 文件大小超过20KB`)
+        // 检查文件大小（限制为10KB）
+        if (file.size > 10 * 1024) {
+          toast.error(`${file.name} 文件大小超过10KB`)
           continue
         }
 
@@ -874,7 +874,7 @@ export default function AiPage() {
 
           {/* 输入框区域 */}
           <div
-            className="mb-1 relative"
+            className="relative"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
           >
@@ -889,9 +889,9 @@ export default function AiPage() {
                     ? '输入任何问题...'
                     : '输入任何问题或读取纯文本文件...'
               }
-              className="w-full min-h-[80px] max-h-[200px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full min-h-[40px] max-h-[100px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={isLoading}
-              rows={3}
+              rows={2}
             />
 
             {/* 拖拽提示 */}
