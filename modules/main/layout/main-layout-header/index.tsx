@@ -15,12 +15,8 @@ const RouteList = [
     pathName: 'Home',
   },
   {
-    path: '/blog',
-    pathName: 'Blog',
-  },
-  {
-    path: '/note',
-    pathName: 'Note',
+    path: '/writeup',
+    pathName: 'WriteUp',
   },
   {
     path: '/ai',
