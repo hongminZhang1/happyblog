@@ -3,7 +3,7 @@
 import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { FileText, BookOpen } from 'lucide-react'
+import { BookOpen, FileText } from 'lucide-react'
 import Link from 'next/link'
 
 export default function WriteUpPage() {
@@ -13,15 +13,15 @@ export default function WriteUpPage() {
       description: '技术博客和文章分享',
       icon: FileText,
       href: '/blog',
-      color: 'text-blue-600 dark:text-blue-400'
+      color: 'text-blue-600 dark:text-blue-400',
     },
     {
       title: 'Note',
       description: '学习笔记和心得记录',
       icon: BookOpen,
       href: '/note',
-      color: 'text-green-600 dark:text-green-400'
-    }
+      color: 'text-green-600 dark:text-green-400',
+    },
   ]
 
   return (
@@ -50,7 +50,8 @@ export default function WriteUpPage() {
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button variant="outline" className="w-full">
-                    进入{section.title}
+                    进入
+                    {section.title}
                   </Button>
                 </CardContent>
               </Link>
