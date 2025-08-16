@@ -13,7 +13,7 @@ export default function NoteListItem({
 }) {
   return (
     <Link
-      href={`note/${slug}`}
+      href={`/w/note/${slug}`}
       className="flex items-center justify-between gap-10 p-2 cursor-pointer
                 hover:text-purple-600
                 dark:hover:text-emerald-300 rounded-sm duration-500 group"

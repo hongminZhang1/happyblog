@@ -30,7 +30,7 @@ export async function createNote(values: ArticleDTO) {
     throw new Error('标签数量超过 3 个限制')
   }
 
-  revalidatePath('/note')
+  revalidatePath('/w/note')
   revalidatePath('/admin/note')
 
   return await prisma.note.create({
@@ -54,7 +54,7 @@ export async function createNote(values: ArticleDTO) {
 export async function deleteNoteById(noteId: number) {
   await requireAdmin()
 
-  revalidatePath('/note')
+  revalidatePath('/w/note')
   revalidatePath('/admin/note')
 
   return prisma.note.delete({
@@ -67,7 +67,7 @@ export async function deleteNoteById(noteId: number) {
 export async function toggleNotePublishedById(id: number, newIsPublishedStatus: boolean) {
   await requireAdmin()
 
-  revalidatePath('/note')
+  revalidatePath('/w/note')
   revalidatePath('/admin/note')
 
   return await prisma.note.update({
@@ -145,7 +145,7 @@ export async function updateNoteById(values: UpdateArticleDTO) {
     },
   })
 
-  revalidatePath('/note')
+  revalidatePath('/w/note')
   revalidatePath('/admin/note')
 
   return await prisma.note.update({

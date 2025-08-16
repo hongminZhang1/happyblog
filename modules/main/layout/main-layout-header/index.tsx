@@ -15,7 +15,7 @@ const RouteList = [
     pathName: 'Home',
   },
   {
-    path: '/writeup',
+    path: '/w',
     pathName: 'WriteUp',
   },
   {

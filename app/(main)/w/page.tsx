@@ -12,14 +12,14 @@ export default function WriteUpPage() {
       title: 'Blog',
       description: '技术博客和文章分享',
       icon: FileText,
-      href: '/blog',
+      href: '/w/blog',
       color: 'text-blue-600 dark:text-blue-400',
     },
     {
       title: 'Note',
       description: '学习笔记和心得记录',
       icon: BookOpen,
-      href: '/note',
+      href: '/w/note',
       color: 'text-green-600 dark:text-green-400',
     },
   ]

@@ -30,7 +30,7 @@ export async function createBlog(values: ArticleDTO) {
     throw new Error('标签数量超过 3 个限制')
   }
 
-  revalidatePath('/blog')
+  revalidatePath('/w/blog')
   revalidatePath('/admin/blog')
 
   return await prisma.blog.create({
@@ -54,7 +54,7 @@ export async function createBlog(values: ArticleDTO) {
 export async function deleteBlogById(blogId: number) {
   await requireAdmin()
 
-  revalidatePath('/blog')
+  revalidatePath('/w/blog')
   revalidatePath('/admin/blog')
 
   return prisma.blog.delete({
@@ -67,7 +67,7 @@ export async function deleteBlogById(blogId: number) {
 export async function toggleBlogPublishedById(id: number, newIsPublishedStatus: boolean) {
   await requireAdmin()
 
-  revalidatePath('/blog')
+  revalidatePath('/w/blog')
   revalidatePath('/admin/blog')
 
   return await prisma.blog.update({
@@ -146,7 +146,7 @@ export async function updateBlogById(values: UpdateArticleDTO) {
     },
   })
 
-  revalidatePath('/blog')
+  revalidatePath('/w/blog')
   revalidatePath('/admin/blog')
 
   return await prisma.blog.update({

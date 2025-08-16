@@ -19,7 +19,7 @@ export default function ActionButtons({
   return (
     <section className="flex items-center gap-1">
       <Link
-        href={`/blog/${slug}`}
+        href={`/w/blog/${slug}`}
         className={cn(
           buttonVariants({ variant: 'outline', className: 'size-8' }),
         )}

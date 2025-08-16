@@ -20,7 +20,7 @@ export async function createBlogTag(tagName: string) {
   }
 
   revalidatePath('/admin/tag')
-  revalidatePath('/admin/blog')
+  revalidatePath('/w/blog')
 
   return await prisma.blogTag.create({
     data: {
@@ -43,7 +43,7 @@ export async function createNoteTag(tagName: string) {
   }
 
   revalidatePath('/admin/tag')
-  revalidatePath('/admin/note')
+  revalidatePath('/w/note')
 
   return await prisma.noteTag.create({
     data: {
@@ -62,7 +62,7 @@ export async function deleteBlogTagById(id: number) {
   }
 
   revalidatePath('/admin/tag')
-  revalidatePath('/admin/blog')
+  revalidatePath('/w/blog')
 
   return await prisma.blogTag.delete({
     where: {
@@ -81,7 +81,7 @@ export async function deleteNoteTagById(id: number) {
   }
 
   revalidatePath('/admin/tag')
-  revalidatePath('/admin/note')
+  revalidatePath('/w/note')
 
   return await prisma.noteTag.delete({
     where: {
@@ -109,7 +109,7 @@ export async function updateBlogTagById(values: UpdateTagNameDTO) {
   }
 
   revalidatePath('/admin/tag')
-  revalidatePath('/admin/blog')
+  revalidatePath('/w/blog')
 
   return await prisma.blogTag.update({
     where: {
@@ -140,7 +140,7 @@ export async function updateNoteTagById(values: UpdateTagNameDTO) {
   }
 
   revalidatePath('/admin/tag')
-  revalidatePath('/admin/note')
+  revalidatePath('/w/note')
 
   return await prisma.noteTag.update({
     where: {

@@ -13,7 +13,7 @@ export default function BlogListItem({
 }) {
   return (
     <Link
-      href={`blog/${slug}`}
+      href={`/w/blog/${slug}`}
       className="flex items-center justify-between gap-10 p-2 cursor-pointer
                 hover:text-purple-600
                 dark:hover:text-emerald-300 rounded-sm duration-500 group"
