@@ -32,23 +32,25 @@ export default async function NoteListPage() {
   }
 
   return (
-    <motion.main
-      className="flex flex-col px-4"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-    >
-      {allNotes.map(v => (
-        <motion.div variants={itemVariants} key={v.id}>
-          <NoteListItem
-            noteTitle={v.title}
-            createdAt={v.createdAt}
-            slug={v.slug}
-          />
-        </motion.div>
-      ))}
-    </motion.main>
+    <div className="flex flex-col px-4 py-8">
+      <motion.main
+        className="flex flex-col max-w-2xl mx-auto w-full"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
+        {allNotes.map(v => (
+          <motion.div variants={itemVariants} key={v.id}>
+            <NoteListItem
+              noteTitle={v.title}
+              createdAt={v.createdAt}
+              slug={v.slug}
+            />
+          </motion.div>
+        ))}
+      </motion.main>
+    </div>
   )
 }

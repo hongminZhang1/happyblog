@@ -32,7 +32,7 @@ export default async function BlogListPage() {
   }
 
   return (
-    <div className="flex flex-col px-4">
+    <div className="flex flex-col px-4 py-8">
       {/* 搜索栏 - 可选功能 */}
       {/* <ListSearchBar
         placeholder="搜索博客文章..."
@@ -41,7 +41,7 @@ export default async function BlogListPage() {
       /> */}
 
       <motion.main
-        className="flex flex-col"
+        className="flex flex-col max-w-2xl mx-auto w-full"
         initial="hidden"
         animate="visible"
         variants={containerVariants}

@@ -14,17 +14,18 @@ export default function BlogListItem({
   return (
     <Link
       href={`/w/blog/${slug}`}
-      className="flex items-center justify-between gap-10 p-2 cursor-pointer
-                hover:text-purple-600
-                dark:hover:text-emerald-300 rounded-sm duration-500 group"
+      className="block p-4 mb-2 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer
+                hover:border-purple-300 dark:hover:border-emerald-300 hover:shadow-md
+                transition-all duration-300 group bg-white dark:bg-gray-800"
     >
-      <h2 className="relative truncate group">
-        {blogTitle}
-        <ScaleUnderline className="dark:bg-emerald-300 bg-purple-600" />
-      </h2>
-      <time className="shrink-0 text-sm font-light text-gray-400 dark:group-hover:text-emerald-300 group-hover:text-purple-600">
-        {toZhDay(createdAt)}
-      </time>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 group-hover:text-purple-600 dark:group-hover:text-emerald-300 transition-colors">
+          {blogTitle}
+        </h2>
+        <time className="text-sm text-gray-500 dark:text-gray-400">
+          {toZhDay(createdAt)}
+        </time>
+      </div>
     </Link>
   )
 }

@@ -2,7 +2,7 @@
 
 import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
 import { BookOpen, FileText } from 'lucide-react'
 import Link from 'next/link'
 
@@ -25,34 +25,30 @@ export default function WriteUpPage() {
   ]
 
   return (
-    <MaxWidthWrapper className="py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">WriteUp</h1>
-        <p className="text-lg text-muted-foreground">
-          技术分享与学习记录
-        </p>
+    <MaxWidthWrapper className="py-4">
+      <div className="text-center mb-4">
+        <h1 className="text-2xl font-bold mb-4">Write List</h1>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+      <div className="flex flex-col gap-2 max-w-2xl mx-auto">
         {sections.map((section) => {
           const Icon = section.icon
           return (
             <Card key={section.title} className="hover:shadow-lg transition-shadow">
               <Link href={section.href}>
-                <CardHeader className="text-center">
-                  <div className="flex justify-center mb-4">
-                    <Icon className={`w-12 h-12 ${section.color}`} />
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <Icon className={`w-8 h-8 ${section.color}`} />
+                    <div className="flex-1">
+                      <CardTitle className="text-lg font-semibold">{section.title}</CardTitle>
+                      <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
+                        {section.description}
+                      </CardDescription>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      进入
+                    </Button>
                   </div>
-                  <CardTitle className="text-2xl">{section.title}</CardTitle>
-                  <CardDescription className="text-base">
-                    {section.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <Button variant="outline" className="w-full">
-                    进入
-                    {section.title}
-                  </Button>
                 </CardContent>
               </Link>
             </Card>
