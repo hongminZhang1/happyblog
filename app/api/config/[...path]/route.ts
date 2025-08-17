@@ -5,14 +5,15 @@ import { NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } },
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
   try {
-    const filePath = join(process.cwd(), 'config', ...params.path)
+    const resolvedParams = await params
+    const filePath = join(process.cwd(), 'config', ...resolvedParams.path)
     const fileBuffer = await readFile(filePath)
 
     // 根据文件扩展名设置正确的 Content-Type
-    const ext = params.path[params.path.length - 1]?.split('.').pop()?.toLowerCase()
+    const ext = resolvedParams.path[resolvedParams.path.length - 1]?.split('.').pop()?.toLowerCase()
     let contentType = 'application/octet-stream'
 
     switch (ext) {
