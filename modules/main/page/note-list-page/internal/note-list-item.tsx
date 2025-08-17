@@ -1,4 +1,3 @@
-import ScaleUnderline from '@/components/shared/scale-underline'
 import { toZhDay } from '@/lib/time'
 import Link from 'next/link'
 

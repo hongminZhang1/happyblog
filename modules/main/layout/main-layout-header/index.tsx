@@ -22,6 +22,10 @@ const RouteList = [
     path: '/ai',
     pathName: 'AI',
   },
+  {
+    path: '/link',
+    pathName: 'Link',
+  },
 ] as const
 
 // 天气插件HTML内容 - 提取到组件外部避免重复创建
