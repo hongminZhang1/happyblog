@@ -1,7 +1,6 @@
 'use client'
 
 import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
 import { BookOpen, FileText } from 'lucide-react'
 import Link from 'next/link'
@@ -25,9 +24,9 @@ export default function WriteUpPage() {
   ]
 
   return (
-    <MaxWidthWrapper className="py-4">
-      <div className="text-center mb-4">
-        <h1 className="text-2xl font-bold mb-4">Write List</h1>
+    <MaxWidthWrapper className="py-1">
+      <div className="text-center mb-2">
+        <h1 className="text-2xl font-bold">Write List</h1>
       </div>
 
       <div className="flex flex-col gap-2 max-w-2xl mx-auto">
@@ -36,18 +35,15 @@ export default function WriteUpPage() {
           return (
             <Card key={section.title} className="hover:shadow-lg transition-shadow">
               <Link href={section.href}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between gap-4">
+                <CardContent className="p-1">
+                  <div className="items-center justify-between gap-5 flex px-3">
                     <Icon className={`w-8 h-8 ${section.color}`} />
-                    <div className="flex-1">
-                      <CardTitle className="text-lg font-semibold">{section.title}</CardTitle>
-                      <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
-                        {section.description}
-                      </CardDescription>
+                    <div className="flex-2">
+                      <CardTitle className="text-lg font-semibold m-0">{section.title}</CardTitle>
                     </div>
-                    <Button variant="outline" size="sm">
-                      进入
-                    </Button>
+                    <CardDescription className="text-sm text-gray-600 dark:text-gray-400 m-0">
+                      {section.description}
+                    </CardDescription>
                   </div>
                 </CardContent>
               </Link>
