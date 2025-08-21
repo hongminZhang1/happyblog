@@ -1,6 +1,6 @@
 'use client'
 
-import avatar1 from '@/config/img/mn1.png'// 白天
+import avatar1 from '@/config/img/mn1.jpg'// 白天
 import avatar2 from '@/config/img/mn2.jpg'// 黑夜
 import { useTransitionTheme } from '@/hooks/use-transition-theme'
 import { motion } from 'motion/react'
