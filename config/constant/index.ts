@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 }
 
 // * 首页动画加载的文字，建议不要超过 5 个字，不然长度太长，当然，你也可以去修改样式~
-export const INITIAL_WELCOME_TEXT = '夜狗侠'
+export const INITIAL_WELCOME_TEXT = 'ZHM'
 
 // * 配置评论系统的官方文档 https://giscus.app/zh-CN
 export const COMMENT_CARD_REPO = 'NeilYeTAT/yeyu-blog-comment'

@@ -8,21 +8,21 @@ import Link from 'next/link'
 export default function WriteUpPage() {
   const sections = [
     {
-      title: 'Blog',
-      description: '技术博客和文章分享',
+      title: 'Personal Blog',
+      description: '随笔博客',
       icon: FileText,
       href: '/w/blog',
       color: 'text-blue-600 dark:text-blue-400',
     },
     {
-      title: 'Note',
-      description: '学习笔记和心得记录',
+      title: 'Algorithm Note',
+      description: '算法笔记',
       icon: BookOpen,
       href: '/w/note',
       color: 'text-green-600 dark:text-green-400',
     },
     {
-      title: 'ReadingNote',
+      title: 'Reading Note',
       description: '阅读笔记',
       icon: BookOpenCheck,
       href: '/w/readingnote',
