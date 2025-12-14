@@ -10,7 +10,7 @@ export default function ActionButtons({
 }: {
   id: number
   tagName: string
-  tagType: TagType
+  tagType: TagType | 'READING_NOTE'
 }) {
   const { setModalOpen } = useModalStore()
 

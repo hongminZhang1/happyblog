@@ -1,9 +1,10 @@
 'use client'
 
-import type { Blog, BlogTag, Note, NoteTag } from '@prisma/client'
+import type { Blog, BlogTag, Note, NoteTag, ReadingNote, ReadingNoteTag } from '@prisma/client'
 import type { ArticleDTO } from './type'
 import { createBlog, updateBlogById } from '@/actions/blogs'
 import { createNote, updateNoteById } from '@/actions/notes'
+import { createReadingNote, updateReadingNoteById } from '@/actions/readingnote'
 import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/ui/combobox'
 import {
@@ -33,9 +34,9 @@ export default function AdminArticleEditPage({
   relatedArticleTagNames,
   allTags,
 }: {
-  article: Blog | Note | null
+  article: Blog | Note | ReadingNote | null
   relatedArticleTagNames?: string[]
-  allTags: BlogTag[] | NoteTag[]
+  allTags: BlogTag[] | NoteTag[] | ReadingNoteTag[]
 }) {
   const router = useRouter()
   const { setModalOpen } = useModalStore()
@@ -55,12 +56,16 @@ export default function AdminArticleEditPage({
         case TagType.NOTE:
           queryClient.invalidateQueries({ queryKey: ['note-list'] })
           break
+        case 'READING_NOTE':
+          queryClient.invalidateQueries({ queryKey: ['readingnote-list'] })
+          break
         default:
           throw new Error(`文章类型错误`)
       }
 
       toast.success('保存成功')
-      router.push(`/admin/${editPageType.toLowerCase()}/edit/${variables.slug}`)
+      const basePath = editPageType === 'READING_NOTE' ? 'readingnote' : editPageType.toLowerCase()
+      router.push(`/admin/${basePath}/edit/${variables.slug}`)
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -216,7 +221,7 @@ export default function AdminArticleEditPage({
   )
 }
 
-async function updateArticle(values: ArticleDTO, editPageType: TagType, id: number | undefined) {
+async function updateArticle(values: ArticleDTO, editPageType: TagType | 'READING_NOTE', id: number | undefined) {
   if (id) {
     switch (editPageType) {
       case TagType.BLOG:
@@ -224,6 +229,9 @@ async function updateArticle(values: ArticleDTO, editPageType: TagType, id: numb
         break
       case TagType.NOTE:
         await updateNoteById({ ...values, id })
+        break
+      case 'READING_NOTE':
+        await updateReadingNoteById({ ...values, id })
         break
       default:
         throw new Error(`文章类型错误`)
@@ -236,6 +244,9 @@ async function updateArticle(values: ArticleDTO, editPageType: TagType, id: numb
         break
       case TagType.NOTE:
         await createNote(values)
+        break
+      case 'READING_NOTE':
+        await createReadingNote(values)
         break
       default:
         throw new Error(`文章类型错误`)

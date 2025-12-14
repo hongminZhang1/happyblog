@@ -4,6 +4,7 @@ import type { UpdateTagNameDTO } from '@/actions/tags/type'
 import {
   updateBlogTagById,
   updateNoteTagById,
+  updateReadingNoteTagById,
 } from '@/actions/tags'
 import { UpdateTagNameSchema } from '@/actions/tags/type'
 import { Button } from '@/components/ui/button'
@@ -116,6 +117,9 @@ async function updateTagName(values: UpdateTagNameDTO) {
       break
     case TagType.NOTE:
       await updateNoteTagById(values)
+      break
+    case 'READING_NOTE':
+      await updateReadingNoteTagById(values)
       break
     default:
       throw new Error('标签类型错误!')

@@ -22,6 +22,10 @@ const AdminRoutes = [
     pathName: '笔记',
   },
   {
+    path: '/admin/readingnote',
+    pathName: '阅读笔记',
+  },
+  {
     path: '/admin/tag',
     pathName: '标签',
   },

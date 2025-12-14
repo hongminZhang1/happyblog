@@ -1,0 +1,65 @@
+import { getPublishedReadingNoteHTMLBySlug } from '@/actions/readingnote'
+import ArticleDisplayPage from '@/components/shared/article-display-page'
+// import CommentCard from '@/components/shared/comment-card'
+// import HorizontalDividingLine from '@/components/shared/horizontal-dividing-line'
+import ScrollIndicator from '@/components/shared/scroll-indicator'
+import { prisma } from '@/db'
+import { notFound } from 'next/navigation'
+
+export const dynamicParams = true
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const article = await getPublishedReadingNoteHTMLBySlug((await params).slug)
+
+  if (!article)
+    notFound()
+
+  return {
+    title: article.title,
+    description: '',
+  }
+}
+
+export async function generateStaticParams() {
+  const readingNotes = await prisma.readingNote.findMany({
+    where: {
+      isPublished: true,
+    },
+    select: {
+      slug: true,
+    },
+  })
+
+  return readingNotes.map(note => ({
+    slug: note.slug,
+  }))
+}
+
+interface Props {
+  params: Promise<{ slug: string }>
+}
+
+export default async function Page({ params }: Props) {
+  const article = await getPublishedReadingNoteHTMLBySlug((await params).slug)
+
+  if (!article)
+    notFound()
+
+  const { content, title, createdAt, tags, id } = article
+  void id // 保留 id 用于将来可能恢复的评论功能
+  const tagNames = tags.map(v => v.tagName)
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ArticleDisplayPage
+        title={title}
+        createdAt={createdAt}
+        content={content}
+        tags={tagNames}
+      />
+      {/* <HorizontalDividingLine fill="#EC7FA9" /> */}
+      {/* <CommentCard term={`${title}-readingnote-${id}`} /> */}
+      <ScrollIndicator />
+    </div>
+  )
+}

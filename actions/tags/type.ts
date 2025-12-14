@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 export const CreateTagSchema = z.object({
   tagName: z.string().min(1, { message: '标签名不能为空' }).max(TAG_NAME_MAX_LENGTH, { message: '标签名超出大小限制' }),
-  tagType: z.nativeEnum(TagType),
+  tagType: z.union([z.nativeEnum(TagType), z.literal('READING_NOTE')]),
 })
 
 export const UpdateTagNameSchema = z.object({

@@ -2,7 +2,7 @@
 
 import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
-import { BookOpen, FileText } from 'lucide-react'
+import { BookOpen, BookOpenCheck, FileText } from 'lucide-react'
 import Link from 'next/link'
 
 export default function WriteUpPage() {
@@ -20,6 +20,13 @@ export default function WriteUpPage() {
       icon: BookOpen,
       href: '/w/note',
       color: 'text-green-600 dark:text-green-400',
+    },
+    {
+      title: 'ReadingNote',
+      description: '阅读笔记',
+      icon: BookOpenCheck,
+      href: '/w/readingnote',
+      color: 'text-purple-600 dark:text-purple-400',
     },
   ]
 

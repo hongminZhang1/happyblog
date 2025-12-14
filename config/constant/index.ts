@@ -46,6 +46,9 @@ export const BLOG_TITLE_MAX_LENGTH = 50
 // * Note
 export const NOTE_TITLE_MAX_LENGTH = 50
 
+// * ReadingNote
+export const READING_NOTE_TITLE_MAX_LENGTH = 50
+
 // * Tags
 export const TAG_NAME_MAX_LENGTH = 20
 

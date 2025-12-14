@@ -4,6 +4,7 @@ import type { CreateTagDTO } from '@/actions/tags/type'
 import {
   createBlogTag,
   createNoteTag,
+  createReadingNoteTag,
 } from '@/actions/tags'
 import { CreateTagSchema } from '@/actions/tags/type'
 import { Button } from '@/components/ui/button'
@@ -121,6 +122,7 @@ export default function CreateTagModal() {
                         <SelectContent>
                           <SelectItem value={TagType.BLOG}>BLOG</SelectItem>
                           <SelectItem value={TagType.NOTE}>NOTE</SelectItem>
+                          <SelectItem value="READING_NOTE">READING_NOTE</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -146,6 +148,9 @@ async function handleCreateTag(values: CreateTagDTO) {
       break
     case TagType.NOTE:
       await createNoteTag(values.tagName)
+      break
+    case 'READING_NOTE':
+      await createReadingNoteTag(values.tagName)
       break
     default:
       throw new Error('tag type 不匹配')

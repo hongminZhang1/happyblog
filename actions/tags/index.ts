@@ -52,6 +52,29 @@ export async function createNoteTag(tagName: string) {
   })
 }
 
+export async function createReadingNoteTag(tagName: string) {
+  await requireAdmin()
+
+  const existingTagName = await prisma.readingNoteTag.findFirst({
+    where: {
+      tagName,
+    },
+  })
+
+  if (existingTagName) {
+    throw new Error('标签名已存在')
+  }
+
+  revalidatePath('/admin/tag')
+  revalidatePath('/w/readingnote')
+
+  return await prisma.readingNoteTag.create({
+    data: {
+      tagName,
+    },
+  })
+}
+
 export async function deleteBlogTagById(id: number) {
   await requireAdmin()
 
@@ -84,6 +107,25 @@ export async function deleteNoteTagById(id: number) {
   revalidatePath('/w/note')
 
   return await prisma.noteTag.delete({
+    where: {
+      id,
+    },
+  })
+}
+
+export async function deleteReadingNoteTagById(id: number) {
+  await requireAdmin()
+
+  const tag = await prisma.readingNoteTag.findUnique({ where: { id } })
+
+  if (!tag) {
+    throw new Error('标签不存在')
+  }
+
+  revalidatePath('/admin/tag')
+  revalidatePath('/w/readingnote')
+
+  return await prisma.readingNoteTag.delete({
     where: {
       id,
     },
@@ -152,6 +194,37 @@ export async function updateNoteTagById(values: UpdateTagNameDTO) {
   })
 }
 
+export async function updateReadingNoteTagById(values: UpdateTagNameDTO) {
+  await requireAdmin()
+
+  const { id, tagName } = values
+
+  const existingTag = await prisma.readingNoteTag.findFirst({
+    where: {
+      tagName,
+      NOT: {
+        id,
+      },
+    },
+  })
+
+  if (existingTag) {
+    throw new Error(`标签名 "${tagName}" 已存在`)
+  }
+
+  revalidatePath('/admin/tag')
+  revalidatePath('/w/readingnote')
+
+  return await prisma.readingNoteTag.update({
+    where: {
+      id,
+    },
+    data: {
+      tagName,
+    },
+  })
+}
+
 export async function getBlogTags() {
   return await prisma.blogTag.findMany()
 }
@@ -160,14 +233,23 @@ export async function getNoteTags() {
   return await prisma.noteTag.findMany()
 }
 
+export async function getReadingNoteTags() {
+  return await prisma.readingNoteTag.findMany()
+}
+
 export async function getAllTags() {
-  const [blogTags, noteTags] = await Promise.all([
+  const [blogTags, noteTags, readingNoteTags] = await Promise.all([
     prisma.blogTag.findMany({
       include: {
         _count: true,
       },
     }),
     prisma.noteTag.findMany({
+      include: {
+        _count: true,
+      },
+    }),
+    prisma.readingNoteTag.findMany({
       include: {
         _count: true,
       },
@@ -188,11 +270,18 @@ export async function getAllTags() {
     count: tag._count.notes,
   }))
 
-  return [...blogTagsWithCount, ...noteTagsWithCount]
+  const readingNoteTagsWithCount = readingNoteTags.map(tag => ({
+    id: tag.id,
+    tagName: tag.tagName,
+    tagType: TagType.READING_NOTE,
+    count: tag._count.readingNotes,
+  }))
+
+  return [...blogTagsWithCount, ...noteTagsWithCount, ...readingNoteTagsWithCount]
 }
 
 export async function getQueryTags(tagName: string) {
-  const [blogTags, noteTags] = await Promise.all([
+  const [blogTags, noteTags, readingNoteTags] = await Promise.all([
     prisma.blogTag.findMany({
       where: {
         tagName: {
@@ -204,6 +293,16 @@ export async function getQueryTags(tagName: string) {
       },
     }),
     prisma.noteTag.findMany({
+      where: {
+        tagName: {
+          contains: tagName,
+        },
+      },
+      include: {
+        _count: true,
+      },
+    }),
+    prisma.readingNoteTag.findMany({
       where: {
         tagName: {
           contains: tagName,
@@ -229,5 +328,12 @@ export async function getQueryTags(tagName: string) {
     count: tag._count.notes,
   }))
 
-  return [...blogTagsWithCount, ...noteTagsWithCount]
+  const readingNoteTagsWithCount = readingNoteTags.map(tag => ({
+    id: tag.id,
+    tagName: tag.tagName,
+    tagType: TagType.READING_NOTE,
+    count: tag._count.readingNotes,
+  }))
+
+  return [...blogTagsWithCount, ...noteTagsWithCount, ...readingNoteTagsWithCount]
 }

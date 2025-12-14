@@ -1,2 +1,3 @@
 export * from './blog-tag-item-toggle'
 export * from './note-tag-item-toggle'
+export * from './readingnote-tag-item-toggle'

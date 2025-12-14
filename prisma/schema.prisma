@@ -40,9 +40,23 @@ model Note {
   updatedAt DateTime @updatedAt
 }
 
+model ReadingNote {
+  id          Int     @id @default(autoincrement())
+  slug        String  @unique
+  title       String  @db.VarChar(50) // * READING_NOTE_TITLE_MAX_LENGTH
+  content     String  @db.Text
+  isPublished Boolean @default(true)
+
+  tags ReadingNoteTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum TagType {
   BLOG
   NOTE
+  READING_NOTE
 }
 
 model BlogTag {
@@ -59,6 +73,13 @@ model NoteTag {
   tagType TagType @default(NOTE)
 
   notes Note[]
+}
+
+model ReadingNoteTag {
+  id      Int    @id @default(autoincrement())
+  tagName String @unique @db.VarChar(20) // * TAG_NAME_MAX_LENGTH
+
+  readingNotes ReadingNote[]
 }
 
 model Echo {

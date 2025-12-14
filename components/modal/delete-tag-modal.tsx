@@ -1,5 +1,5 @@
 import type { DeleteTagDTO } from '@/actions/tags/type'
-import { deleteBlogTagById, deleteNoteTagById } from '@/actions/tags'
+import { deleteBlogTagById, deleteNoteTagById, deleteReadingNoteTagById } from '@/actions/tags'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -81,6 +81,9 @@ async function handleDeleteTag({ tagType, id }: DeleteTagDTO) {
       break
     case TagType.NOTE:
       await deleteNoteTagById(id)
+      break
+    case TagType.READING_NOTE:
+      await deleteReadingNoteTagById(id)
       break
     default:
       throw new Error('标签类型错误或 id 不存在!')

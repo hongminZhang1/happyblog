@@ -1,5 +1,6 @@
 import { deleteBlogById } from '@/actions/blogs'
 import { deleteNoteById } from '@/actions/notes'
+import { deleteReadingNoteById } from '@/actions/readingnote'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -16,7 +17,7 @@ import { toast } from 'sonner'
 interface DeleteArticleParams {
   id: number
   title: string
-  articleType: TagType
+  articleType: TagType | 'READING_NOTE'
 }
 
 export default function DeleteArticleModal() {
@@ -36,6 +37,9 @@ export default function DeleteArticleModal() {
           break
         case TagType.NOTE:
           queryClient.invalidateQueries({ queryKey: ['note-list'] })
+          break
+        case 'READING_NOTE':
+          queryClient.invalidateQueries({ queryKey: ['readingnote-list'] })
           break
         default:
           throw new Error(`删除文章类型不匹配`)
@@ -92,6 +96,9 @@ async function handleDeleteArticle({ id, articleType }: DeleteArticleParams) {
       break
     case TagType.NOTE:
       await deleteNoteById(id)
+      break
+    case 'READING_NOTE':
+      await deleteReadingNoteById(id)
       break
     default:
       throw new Error(`文章类型不正确`)
