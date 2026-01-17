@@ -5,7 +5,7 @@ import ContactMe from '@/components/shared/contact-me'
 import HorizontalDividingLine from '@/components/shared/horizontal-dividing-line'
 import MaxWidthWrapper from '@/components/shared/max-width-wrapper'
 import StarsBackground from '@/components/shared/stars-background'
-import StartUpMotion from '@/components/shared/start-up-motion'
+// import StartUpMotion from '@/components/shared/start-up-motion'
 import { Toaster } from '@/components/ui/sonner'
 import MainLayoutHeader from '@/modules/main/layout/main-layout-header'
 import { usePathname } from 'next/navigation'
@@ -40,7 +40,7 @@ export default function MainLayout({
           )}
         </MaxWidthWrapper>
 
-        <StartUpMotion />
+        {/* <StartUpMotion /> */}
         <StarsBackground />
       </main>
 
