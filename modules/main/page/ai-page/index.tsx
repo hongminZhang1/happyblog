@@ -759,7 +759,7 @@ export default function AiPage() {
             </Button>
           </form>
           <div className="text-center mb-2">
-            <p className="text-muted-foreground">密码: 123456 状态: 公开</p>
+            <p className="text-muted-foreground">密码:****** 状态: 私密</p>
           </div>
         </motion.div>
       </motion.main>
